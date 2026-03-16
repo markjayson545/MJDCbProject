@@ -93,22 +93,7 @@
             <p style="font-size: 1.5rem; margin: 0 0 0.5rem;">🐘</p>
             <p style="font-size: 0.875rem; font-weight: 600; color: #1a1a2e; margin: 0;">PHP 8.4</p>
         </div>
-        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1rem; text-align: center;">
-            <p style="font-size: 1.5rem; margin: 0 0 0.5rem;">🎨</p>
-            <p style="font-size: 0.875rem; font-weight: 600; color: #1a1a2e; margin: 0;">Tailwind CSS 3</p>
-        </div>
-        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1rem; text-align: center;">
-            <p style="font-size: 1.5rem; margin: 0 0 0.5rem;">⚙️</p>
-            <p style="font-size: 0.875rem; font-weight: 600; color: #1a1a2e; margin: 0;">Alpine.js 3</p>
-        </div>
-        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1rem; text-align: center;">
-            <p style="font-size: 1.5rem; margin: 0 0 0.5rem;">🧪</p>
-            <p style="font-size: 0.875rem; font-weight: 600; color: #1a1a2e; margin: 0;">Pest 4</p>
-        </div>
-        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1rem; text-align: center;">
-            <p style="font-size: 1.5rem; margin: 0 0 0.5rem;">⚓</p>
-            <p style="font-size: 0.875rem; font-weight: 600; color: #1a1a2e; margin: 0;">Sail</p>
-        </div>
+
     </div>
 
     <div style="background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%); border: 1px solid #e5e7eb; border-radius: 8px; padding: 2rem; text-align: center;">
@@ -121,13 +106,13 @@
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                <span>mjdc@psu.edu.ph</span>
+                <span>23sc4165_ms@psu.edu.ph</span>
             </div>
             <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: #374151;">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                 </svg>
-                <span>+63 912 345 6789</span>
+                <span>+63 981 088 7893</span>
             </div>
             <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: #374151;">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -60,3 +60,5 @@ Route::get('/studentMgmtHome', [StudentsController::class, 'displayHome'])->name
 Route::get('/studentMgmtStudents', [StudentsController::class, 'displayStudents'])->name('studentMgmtStudents');
 
 Route::get('/studentMgmtAbout', [StudentsController::class, 'displayAbout'])->name('studentMgmtAbout');
+
+Route::resource('/studentMgmt', StudentsController::class);

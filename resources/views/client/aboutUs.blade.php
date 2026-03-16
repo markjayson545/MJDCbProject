@@ -121,7 +121,7 @@
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                <span>mjdc@psu.edu.ph</span>
+                <span>23sc4165_ms@psu.edu.ph</span>
             </div>
             <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: #374151;">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
