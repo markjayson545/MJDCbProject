@@ -96,7 +96,7 @@
             </li>
 
             <li>
-                <a href="{{ route('studentMgmtStudents') }}"
+                <a href="{{ route('studentMgmt.index') }}"
                    class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

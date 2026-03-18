@@ -5,6 +5,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PSUController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentMgmt\DegreesController;
 use App\Http\Controllers\StudentMgmt\StudentsController;
 use Illuminate\Support\Facades\Route;
 
@@ -62,3 +63,5 @@ Route::get('/studentMgmtStudents', [StudentsController::class, 'displayStudents'
 Route::get('/studentMgmtAbout', [StudentsController::class, 'displayAbout'])->name('studentMgmtAbout');
 
 Route::resource('/studentMgmt', StudentsController::class);
+
+Route::resource('/degrees', DegreesController::class);

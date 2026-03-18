@@ -1,40 +1,25 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Student — MJDC')
+@section('title', 'Edit Degree — MJDC')
 
-@section('page-title', 'Edit Student')
-@section('page-subtitle', 'Update student information')
+@section('page-title', 'Edit Degree')
+@section('page-subtitle', 'Update degree information')
 
 @section('content')
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 * { font-family: 'Outfit', sans-serif; box-sizing: border-box; }
 
-:root {
-    --primary:   #1a1a2e;
-    --accent:    #e94560;
-    --accent-dk: #c83550;
-    --blue:      #0f3460;
-    --border:    #e2e8f0;
-    --text:      #1e293b;
-    --muted:     #64748b;
-    --card:      #ffffff;
-    --bg:        #f8fafd;
-    --r:         12px;
-    --r-sm:      8px;
-    --shadow:    0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
-}
-
 .form-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    box-shadow: var(--shadow);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
     overflow: hidden;
     max-width: 760px;
 }
 .form-card-header {
-    background: linear-gradient(135deg, var(--blue) 0%, #1a3a6e 100%);
+    background: linear-gradient(135deg, #0f3460 0%, #1a3a6e 100%);
     padding: 1.5rem 2rem;
     display: flex;
     align-items: center;
@@ -75,8 +60,8 @@
 }
 .form-card-footer {
     padding: 1.25rem 2rem;
-    background: var(--bg);
-    border-top: 1px solid var(--border);
+    background: #f8fafd;
+    border-top: 1px solid #e2e8f0;
     display: flex;
     align-items: center;
     gap: 0.875rem;
@@ -87,7 +72,7 @@
     align-items: center;
     gap: 0.45rem;
     padding: 0.6rem 1.4rem;
-    border-radius: var(--r-sm);
+    border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
@@ -97,7 +82,7 @@
     font-family: 'Outfit', sans-serif;
 }
 .btn-primary {
-    background: var(--blue);
+    background: #0f3460;
     color: #fff;
 }
 .btn-primary:hover {
@@ -107,12 +92,12 @@
 }
 .btn-ghost {
     background: transparent;
-    color: var(--muted);
-    border: 1.5px solid var(--border);
+    color: #64748b;
+    border: 1.5px solid #e2e8f0;
 }
 .btn-ghost:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: #e94560;
+    color: #e94560;
 }
 .btn-danger-ghost {
     background: transparent;
@@ -128,7 +113,7 @@
 
 @include('student_mgmt.components.alerts')
 
-<form action="{{ route('studentMgmt.update', $student['id']) }}" method="POST">
+<form action="{{ route('degrees.update', $degree['id']) }}" method="POST">
     @csrf
     @method('PUT')
 
@@ -140,16 +125,16 @@
                 </svg>
             </div>
             <div>
-                <h2>Edit Student Record</h2>
-                <p>Update the student's information below</p>
+                <h2>Edit Degree Record</h2>
+                <p>Update the degree information below</p>
                 <span class="student-name-badge">
-                    ID #{{ $student['id'] }} — {{ $student['fname'] }} {{ $student['lname'] }}
+                    ID #{{ $degree['id'] }} — {{ $degree['name'] }}
                 </span>
             </div>
         </div>
 
         <div class="form-card-body">
-            @include('student_mgmt.components.form-fields')
+            @include('student_mgmt.components.degree-form-fields')
         </div>
 
         <div class="form-card-footer">
@@ -159,7 +144,7 @@
                 </svg>
                 Save Changes
             </button>
-            <a href="{{ route('studentMgmt.index') }}" class="btn btn-ghost">Cancel</a>
+            <a href="{{ route('degrees.index') }}" class="btn btn-ghost">Cancel</a>
         </div>
     </div>
 </form>

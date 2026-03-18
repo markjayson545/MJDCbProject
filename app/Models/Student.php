@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Student extends Model
 {
@@ -18,6 +19,15 @@ class Student extends Model
         'contactno',
         'email',
         'description',
-        // Add other relevant fields as needed
+        // Add degree_id foreign key
+        'degree_id',
     ];
+
+    /**
+     * Degree relationship (student belongs to degree)
+     */
+    public function degree(): BelongsTo
+    {
+        return $this->belongsTo(Degree::class, 'degree_id');
+    }
 }

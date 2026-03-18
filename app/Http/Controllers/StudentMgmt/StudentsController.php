@@ -4,6 +4,7 @@ namespace App\Http\Controllers\StudentMgmt;
 
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Models\Degree;
 use Illuminate\Http\Request;
 
 class StudentsController extends Controller
@@ -13,7 +14,12 @@ class StudentsController extends Controller
      */
     public function index()
     {
-        $students = Student::paginate(2);
+        $students = Student::with('degree')->paginate(10);
+        // Convert loaded models to arrays so blades that use array access also see relations
+        $students->getCollection()->transform(function ($s) {
+            return $s->toArray();
+        });
+
         return view('student_mgmt.students', compact('students'));
     }
 
@@ -22,7 +28,8 @@ class StudentsController extends Controller
      */
     public function create()
     {
-        return view('student_mgmt.create');
+        $degrees = Degree::orderBy('name')->get()->toArray();
+        return view('student_mgmt.create')->with('degrees', $degrees);
     }
 
     public function displayHome()
@@ -51,15 +58,6 @@ class StudentsController extends Controller
      */
     public function store(Request $request)
     {
-        // Non eloquent way to create a student
-        // $student = new Student();
-        // $student->fname = $request->input('fname');
-        // $student->mname = $request->input('mname');
-        // $student->lname = $request->input('lname');
-        // $student->contactno = $request->input('contactno');
-        // $student->email = $request->input('email');
-        // $student->description = $request->input('description');
-        // $student->save();
         try {
             $request->validate([
                 'fname' => 'required|string|max:255',
@@ -68,6 +66,7 @@ class StudentsController extends Controller
                 'contactno' => 'required|string|max:20',
                 'email' => 'required|email|unique:students,email',
                 'description' => 'nullable|string',
+                'degree_id' => 'nullable|integer|exists:degrees,id',
             ]);
 
             Student::create([
@@ -77,11 +76,12 @@ class StudentsController extends Controller
                 'contactno' => $request->input('contactno'),
                 'email' => $request->input('email'),
                 'description' => $request->input('description'),
+                'degree_id' => $request->input('degree_id'),
             ]);
         } catch (\Exception $e) {
             return redirect()->route('studentMgmt.create')->with('error', 'Failed to create student: ' . $e->getMessage());
         }
-        return redirect()->route('studentMgmt.create')->with('success', 'Student created successfully.');
+        return redirect()->route('studentMgmt.index')->with('success', 'Student created successfully.');
     }
 
     /**
@@ -89,11 +89,11 @@ class StudentsController extends Controller
      */
     public function show(string $id)
     {
-        $student = Student::find($id);
+        $student = Student::with('degree')->find($id);
         if (!$student) {
             return redirect()->route('studentMgmt.index')->with('error', 'Student not found.');
         }
-        return view('student_mgmt.show', compact('student'));
+        return view('student_mgmt.show')->with('student', $student->toArray());
     }
 
     /**
@@ -101,7 +101,12 @@ class StudentsController extends Controller
      */
     public function edit(string $id)
     {
-        return view('student_mgmt.edit')->with('student', Student::find($id));
+        $student = Student::find($id);
+        if (!$student) {
+            return redirect()->route('studentMgmt.index')->with('error', 'Student not found.');
+        }
+        $degrees = Degree::orderBy('name')->get()->toArray();
+        return view('student_mgmt.edit')->with('student', $student->toArray())->with('degrees', $degrees);
     }
 
     /**
@@ -117,6 +122,7 @@ class StudentsController extends Controller
                 'contactno' => 'required|string|max:20',
                 'email' => 'required|email|unique:students,email,' . $id,
                 'description' => 'nullable|string',
+                'degree_id' => 'nullable|integer|exists:degrees,id',
             ]);
 
             $student = Student::find($id);
@@ -130,6 +136,7 @@ class StudentsController extends Controller
                 'contactno' => $request->input('contactno'),
                 'email' => $request->input('email'),
                 'description' => $request->input('description'),
+                'degree_id' => $request->input('degree_id'),
             ]);
             return redirect()->route('studentMgmt.edit', $id)->with('success', 'Student updated successfully.');
 
