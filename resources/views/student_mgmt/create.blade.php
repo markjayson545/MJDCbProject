@@ -133,7 +133,6 @@
                 @php $student = null; @endphp
                 {{-- First & Last Name in a row --}}
             </div>
-
             @include('student_mgmt.components.form-fields')
         </div>
 

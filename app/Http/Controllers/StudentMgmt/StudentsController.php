@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\StudentMgmt;
 
 use App\Http\Controllers\Controller;
-use App\Models\Student;
 use App\Models\Degree;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class StudentsController extends Controller
@@ -29,6 +29,7 @@ class StudentsController extends Controller
     public function create()
     {
         $degrees = Degree::orderBy('name')->get()->toArray();
+
         return view('student_mgmt.create')->with('degrees', $degrees);
     }
 
@@ -39,19 +40,14 @@ class StudentsController extends Controller
 
     public function displayStudents()
     {
-        $students = [
-//            ['name' => 'Mark Jayson Dela Cruz', 'age' => '20', 'course' => 'BSIT'],
-//            ['name' => 'Alexia Cayabyab', 'age' => '19', 'course' => 'BSCS'],
-//            ['name' => 'Adrian Cabic', 'age' => '21', 'course' => 'BSIS'],
-        ];
-        return view('student_mgmt.students')->with('students', $students);
+        // Ensure the legacy display route uses the same paginated index view so pagination links are available.
+        return redirect()->route('studentMgmt.index');
     }
 
     public function displayAbout()
     {
         return view('student_mgmt.about');
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -61,10 +57,10 @@ class StudentsController extends Controller
         try {
             $request->validate([
                 'fname' => 'required|string|max:255',
-                'mname' => 'nullable|string|max:255',
+                'mname' => 'required|string|max:255',
                 'lname' => 'required|string|max:255',
                 'contactno' => 'required|string|max:20',
-                'email' => 'required|email|unique:students,email',
+                'email' => 'required|email',
                 'description' => 'nullable|string',
                 'degree_id' => 'nullable|integer|exists:degrees,id',
             ]);
@@ -79,8 +75,9 @@ class StudentsController extends Controller
                 'degree_id' => $request->input('degree_id'),
             ]);
         } catch (\Exception $e) {
-            return redirect()->route('studentMgmt.create')->with('error', 'Failed to create student: ' . $e->getMessage());
+            return redirect()->route('studentMgmt.create')->with('error', 'Failed to create student: '.$e->getMessage());
         }
+
         return redirect()->route('studentMgmt.index')->with('success', 'Student created successfully.');
     }
 
@@ -90,9 +87,10 @@ class StudentsController extends Controller
     public function show(string $id)
     {
         $student = Student::with('degree')->find($id);
-        if (!$student) {
+        if (! $student) {
             return redirect()->route('studentMgmt.index')->with('error', 'Student not found.');
         }
+
         return view('student_mgmt.show')->with('student', $student->toArray());
     }
 
@@ -102,10 +100,11 @@ class StudentsController extends Controller
     public function edit(string $id)
     {
         $student = Student::find($id);
-        if (!$student) {
+        if (! $student) {
             return redirect()->route('studentMgmt.index')->with('error', 'Student not found.');
         }
         $degrees = Degree::orderBy('name')->get()->toArray();
+
         return view('student_mgmt.edit')->with('student', $student->toArray())->with('degrees', $degrees);
     }
 
@@ -120,13 +119,13 @@ class StudentsController extends Controller
                 'mname' => 'nullable|string|max:255',
                 'lname' => 'required|string|max:255',
                 'contactno' => 'required|string|max:20',
-                'email' => 'required|email|unique:students,email,' . $id,
+                'email' => 'required|email|unique:students,email,'.$id,
                 'description' => 'nullable|string',
                 'degree_id' => 'nullable|integer|exists:degrees,id',
             ]);
 
             $student = Student::find($id);
-            if (!$student) {
+            if (! $student) {
                 return redirect()->route('studentMgmt.index')->with('error', 'Student not found.');
             }
             $student->update([
@@ -138,10 +137,11 @@ class StudentsController extends Controller
                 'description' => $request->input('description'),
                 'degree_id' => $request->input('degree_id'),
             ]);
+
             return redirect()->route('studentMgmt.edit', $id)->with('success', 'Student updated successfully.');
 
         } catch (\Throwable $th) {
-            return redirect()->route('studentMgmt.edit', $id)->with('error', 'Failed to update student: ' . $th->getMessage());
+            return redirect()->route('studentMgmt.edit', $id)->with('error', 'Failed to update student: '.$th->getMessage());
         }
     }
 
@@ -153,8 +153,9 @@ class StudentsController extends Controller
         try {
             Student::destroy($id);
         } catch (\Exception $e) {
-            return redirect()->route('studentMgmt.index')->with('error', 'Failed to delete student: ' . $e->getMessage());
+            return redirect()->route('studentMgmt.index')->with('error', 'Failed to delete student: '.$e->getMessage());
         }
+
         return redirect()->route('studentMgmt.index')->with('success', 'Student deleted successfully.');
     }
 }

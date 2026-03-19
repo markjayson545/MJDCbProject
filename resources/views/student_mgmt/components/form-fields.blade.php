@@ -54,10 +54,10 @@
 </div>
 
 <div class="ff-group">
-    <label for="mname">Middle Name</label>
+    <label for="mname">Middle Name <span class="req">*</span> </label>
     <input type="text" name="mname" id="mname"
            value="{{ old('mname', $student['mname'] ?? '') }}"
-           placeholder="e.g. Santos (optional)">
+           required placeholder="e.g. Santos">
 </div>
 
 <div class="ff-group">
@@ -92,6 +92,9 @@
         @endforeach
     </select>
     <span class="ff-hint">Optional — associate a degree to the student</span>
+    <button type="button" class="btn btn-ghost" style="margin-top: 0.5rem; width: max-content" onclick="window.location='{{ route('degrees.index') }}'">
+        Manage Degrees
+    </button>
 </div>
 
 <div class="ff-group">
