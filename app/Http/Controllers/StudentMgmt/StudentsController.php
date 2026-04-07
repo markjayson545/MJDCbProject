@@ -3,24 +3,28 @@
 namespace App\Http\Controllers\StudentMgmt;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
 use App\Models\Degree;
 use App\Models\Student;
+use App\Models\UserProfile;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
 class StudentsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
-        // Join students with degree table to get degree name, and paginate results
-        $students = Student::with('degree')->paginate(2);
-        // Add degree names to each student record for easier access in the view
+        $students = Student::with(['degree', 'courses', 'userProfile'])->paginate(10);
+
         $students->getCollection()->transform(function ($s) {
             return $s->toArray();
         });
-        error_log('Fetched students with degrees: '.json_encode($students));
+        Log::info('Fetched students list.', ['count' => $students->total()]);
 
         return view('student_mgmt.students')->with('students', $students);
     }
@@ -28,25 +32,29 @@ class StudentsController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
-        $degrees = Degree::orderBy('name')->get()->toArray();
+        $degrees = Degree::orderBy('name', 'asc')->get()->toArray();
+        $courses = Course::orderBy('title', 'asc')->get()->toArray();
+        $userProfiles = UserProfile::query()->whereDoesntHave('student')->orderBy('username')->get()->toArray();
 
-        return view('student_mgmt.create')->with('degrees', $degrees);
+        return view('student_mgmt.create')
+            ->with('degrees', $degrees)
+            ->with('courses', $courses)
+            ->with('userProfiles', $userProfiles);
     }
 
-    public function displayHome()
+    public function displayHome(): View
     {
         return view('student_mgmt.home');
     }
 
-    public function displayStudents()
+    public function displayStudents(): RedirectResponse
     {
-        // Ensure the legacy display route uses the same paginated index view so pagination links are available.
         return redirect()->route('studentMgmt.index');
     }
 
-    public function displayAbout()
+    public function displayAbout(): View
     {
         return view('student_mgmt.about');
     }
@@ -54,30 +62,49 @@ class StudentsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        try {
-            $request->validate([
-                'fname' => 'required|string|max:255',
-                'mname' => 'required|string|max:255',
-                'lname' => 'required|string|max:255',
-                'contactno' => 'required|string|max:20',
-                'email' => 'required|email',
-                'description' => 'nullable|string',
-                'degree_id' => 'nullable|integer|exists:degrees,id',
+        $validator = \Validator::make($request->all(), [
+            'fname' => 'required|string|max:255|min:2',
+            'lname' => 'required|string|max:255|min:2',
+            'contactno' => 'required|string|max:20|min:10',
+            'email' => 'required|email',
+            'description' => 'nullable|string',
+            'degree_id' => 'nullable|integer|exists:degrees,id',
+            'user_profile_id' => 'nullable|integer|exists:user_profiles,id|unique:students,user_profile_id',
+            'course_ids' => 'nullable|array',
+            'course_ids.*' => 'integer|exists:courses,id',
+        ]);
+
+        if ($validator->fails()) {
+            Log::error('Failed to create student validation.', [
+                'error' => $validator->errors()->first(),
             ]);
 
-            Student::create([
-                'fname' => $request->input('fname'),
-                'mname' => $request->input('mname'),
-                'lname' => $request->input('lname'),
-                'contactno' => $request->input('contactno'),
-                'email' => $request->input('email'),
-                'description' => $request->input('description'),
-                'degree_id' => $request->input('degree_id'),
+            return redirect()->route('studentMgmt.create')->withErrors($validator)->withInput();
+        }
+
+        try {
+            $validated = $validator->validated();
+
+            $student = Student::create([
+                'fname' => $validated['fname'],
+                'mname' => $validated['mname'] ?? null,
+                'lname' => $validated['lname'],
+                'contactno' => $validated['contactno'],
+                'email' => $validated['email'],
+                'description' => $validated['description'] ?? null,
+                'degree_id' => $validated['degree_id'] ?? null,
+                'user_profile_id' => $validated['user_profile_id'] ?? null,
             ]);
-        } catch (\Exception $e) {
-            return redirect()->route('studentMgmt.create')->with('error', 'Failed to create student: '.$e->getMessage());
+
+            $student->courses()->sync($validated['course_ids'] ?? []);
+
+            Log::info('Created new student.', ['student_id' => $student->id]);
+        } catch (\Throwable $throwable) {
+            Log::error('Failed to create student.', ['error' => $throwable->getMessage()]);
+
+            return redirect()->route('studentMgmt.create')->withInput()->with('error', 'Failed to create student: '.$throwable->getMessage());
         }
 
         return redirect()->route('studentMgmt.index')->with('success', 'Student created successfully.');
@@ -86,9 +113,9 @@ class StudentsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): View|RedirectResponse
     {
-        $student = Student::with('degree')->find($id);
+        $student = Student::with(['degree', 'courses', 'userProfile'])->find($id);
         if (! $student) {
             return redirect()->route('studentMgmt.index')->with('error', 'Student not found.');
         }
@@ -99,63 +126,103 @@ class StudentsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id): View|RedirectResponse
     {
-        $student = Student::find($id);
+        $student = Student::with(['courses', 'userProfile'])->find($id);
         if (! $student) {
             return redirect()->route('studentMgmt.index')->with('error', 'Student not found.');
         }
-        $degrees = Degree::orderBy('name')->get()->toArray();
 
-        return view('student_mgmt.edit')->with('student', $student->toArray())->with('degrees', $degrees);
+        $degrees = Degree::orderBy('name', 'asc')->get()->toArray();
+        $courses = Course::orderBy('title', 'asc')->get()->toArray();
+        $userProfiles = UserProfile::query()
+            ->whereDoesntHave('student')
+            ->orWhere('id', $student->user_profile_id)
+            ->orderBy('username')
+            ->get()
+            ->toArray();
+
+        return view('student_mgmt.edit')
+            ->with('student', $student->toArray())
+            ->with('degrees', $degrees)
+            ->with('courses', $courses)
+            ->with('userProfiles', $userProfiles);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): RedirectResponse
     {
-        try {
-            $request->validate([
-                'fname' => 'required|string|max:255',
-                'mname' => 'nullable|string|max:255',
-                'lname' => 'required|string|max:255',
-                'contactno' => 'required|string|max:20',
-                'email' => 'required|email|unique:students,email,'.$id,
-                'description' => 'nullable|string',
-                'degree_id' => 'nullable|integer|exists:degrees,id',
+        $validator = \Validator::make($request->all(), [
+            'fname' => 'required|string|max:255|min:2',
+            'lname' => 'required|string|max:255|min:2',
+            'contactno' => 'required|string|max:20|min:10',
+            'email' => 'required|email|unique:students,email,'.$id,
+            'description' => 'nullable|string',
+            'degree_id' => 'nullable|integer|exists:degrees,id',
+            'user_profile_id' => 'nullable|integer|exists:user_profiles,id|unique:students,user_profile_id,'.$id,
+            'course_ids' => 'nullable|array',
+            'course_ids.*' => 'integer|exists:courses,id',
+        ]);
+
+        if ($validator->fails()) {
+            Log::error('Failed to update student validation.', [
+                'student_id' => $id,
+                'error' => $validator->errors()->first(),
             ]);
 
-            $student = Student::find($id);
-            if (! $student) {
-                return redirect()->route('studentMgmt.index')->with('error', 'Student not found.');
-            }
-            $student->update([
-                'fname' => $request->input('fname'),
-                'mname' => $request->input('mname'),
-                'lname' => $request->input('lname'),
-                'contactno' => $request->input('contactno'),
-                'email' => $request->input('email'),
-                'description' => $request->input('description'),
-                'degree_id' => $request->input('degree_id'),
-            ]);
-
-            return redirect()->route('studentMgmt.edit', $id)->with('success', 'Student updated successfully.');
-
-        } catch (\Throwable $th) {
-            return redirect()->route('studentMgmt.edit', $id)->with('error', 'Failed to update student: '.$th->getMessage());
+            return redirect()->route('studentMgmt.edit', $id)->withErrors($validator)->withInput();
         }
+
+        $student = Student::query()->find($id);
+
+        if (! $student) {
+            return redirect()->route('studentMgmt.index')->with('error', 'Student not found.');
+        }
+
+        try {
+            $validated = $validator->validated();
+
+            $student->update([
+                'fname' => $validated['fname'],
+                'mname' => $validated['mname'] ?? null,
+                'lname' => $validated['lname'],
+                'contactno' => $validated['contactno'],
+                'email' => $validated['email'],
+                'description' => $validated['description'] ?? null,
+                'degree_id' => $validated['degree_id'] ?? null,
+                'user_profile_id' => $validated['user_profile_id'] ?? null,
+            ]);
+
+            $student->courses()->sync($validated['course_ids'] ?? []);
+
+            Log::info('Updated student.', ['student_id' => $id]);
+        } catch (\Throwable $throwable) {
+            Log::error('Failed to update student.', ['student_id' => $id, 'error' => $throwable->getMessage()]);
+
+            return redirect()->route('studentMgmt.edit', $id)->with('error', 'Failed to update student: '.$throwable->getMessage());
+        }
+
+        return redirect()->route('studentMgmt.show', $id)->with('success', 'Student updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): RedirectResponse
     {
+        $student = Student::query()->find($id);
+
+        if (! $student) {
+            return redirect()->route('studentMgmt.index')->with('error', 'Student not found.');
+        }
+
         try {
-            Student::destroy($id);
-        } catch (\Exception $e) {
-            return redirect()->route('studentMgmt.index')->with('error', 'Failed to delete student: '.$e->getMessage());
+            $student->courses()->detach();
+            $student->delete();
+        } catch (\Throwable $throwable) {
+            return redirect()->route('studentMgmt.index')->with('error', 'Failed to delete student: '.$throwable->getMessage());
         }
 
         return redirect()->route('studentMgmt.index')->with('success', 'Student deleted successfully.');

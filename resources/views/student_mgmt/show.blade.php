@@ -11,7 +11,7 @@
     $initials = strtoupper(substr($student['fname'] ?? 'S', 0, 1) . substr($student['lname'] ?? '', 0, 1));
 @endphp
 
-<div class="student-header">
+<div class="student-header p-5">
     <div class="student-header-banner">
         <div class="student-avatar">{{ $initials }}</div>
         <div class="student-header-info">
@@ -27,6 +27,10 @@
         <div class="meta-item">
             <strong>Contact</strong>
             {{ $student['contactno'] }}
+        </div>
+        <div class="meta-item">
+            <strong>Linked Profile</strong>
+            {{ $student['user_profile']['username'] ?? '—' }}
         </div>
         <div class="meta-item">
             <strong>Created</strong>
@@ -64,6 +68,37 @@
         <span class="detail-val">{{ $student['degree']['name'] ?? '—' }}</span>
     </div>
     <div class="detail-row">
+        <span class="detail-key">Linked User Profile</span>
+        <span class="detail-val">{{ $student['user_profile']['username'] ?? '—' }}</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-key">Subjects (Pivot)</span>
+        <span class="detail-val">
+            @if(! empty($student['courses']))
+                <div class="mjdc-table-wrap">
+                    <table class="mjdc-table">
+                        <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Assigned At</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($student['courses'] as $course)
+                            <tr>
+                                <td>{{ $course['title'] }}</td>
+                                <td>{{ $course['pivot']['created_at'] ?? '—' }}</td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                —
+            @endif
+        </span>
+    </div>
+    <div class="detail-row">
         <span class="detail-key">Description</span>
         <span class="detail-val description">{{ $student['description'] ?: 'No description provided.' }}</span>
     </div>
@@ -79,18 +114,18 @@
 
 {{-- Actions --}}
 <div class="actions-bar">
-    <a href="{{ route('studentMgmt.edit', $student['id']) }}" class="btn btn-blue">
+    <a href="{{ route('studentMgmt.edit', $student['id']) }}" class="btn btn-blue flex flex-row items-center">
         <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
         </svg>
         Edit Record
     </a>
-    <a href="{{ route('studentMgmt.index') }}" class="btn btn-ghost">← Back to List</a>
+    <a href="{{ route('studentMgmt.index') }}" class="btn btn-ghost"> ← Back to List</a>
 </div>
 
 {{-- Delete zone --}}
-<div class="delete-zone">
-    <div class="delete-zone-text">
+<div class="delete-zone p-5">
+    <div class="delete-zone-text p-5">
         <strong>Danger Zone</strong>
         Permanently remove this student record. This action cannot be undone.
     </div>

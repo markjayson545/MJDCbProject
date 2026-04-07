@@ -4,32 +4,41 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Student extends Model
 {
-    // Student model representing the 'students' table in the database
     protected $table = 'students';
+
     protected $primaryKey = 'id';
+
     public $incrementing = true;
+
     protected $fillable = [
-        // Define fillable attributes for mass assignment
         'fname',
         'mname',
         'lname',
         'contactno',
         'email',
         'description',
-        // Add degree_id foreign key
         'degree_id',
-        // Add course_id as foreign key, many to many relationship
-        'course_id',
+        'user_profile_id',
     ];
 
-    /**
-     * Degree relationship (student belongs to degree)
-     */
     public function degree(): BelongsTo
     {
         return $this->belongsTo(Degree::class, 'degree_id');
+    }
+
+    public function courses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class, 'course_student', 'student_id', 'course_id')
+            ->using(\App\Models\CourseStudent::class)
+            ->withTimestamps();
+    }
+
+    public function userProfile(): BelongsTo
+    {
+        return $this->belongsTo(UserProfile::class);
     }
 }

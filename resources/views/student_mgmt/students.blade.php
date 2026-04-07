@@ -27,8 +27,10 @@
                 <th>#</th>
                 <th>Student Name</th>
                 <th>Email</th>
+                <th>Linked Profile</th>
                 <th>Contact No.</th>
                 <th>Degree</th>
+                <th>Subjects</th>
                 <th>Description</th>
                 <th>Actions</th>
             </tr>
@@ -41,8 +43,23 @@
                         <span class="student-name">{{ $student['lname'] }}, {{ $student['fname'] }} {{ $student['mname'] }}</span>
                     </td>
                     <td>{{ $student['email'] }}</td>
+                    <td>{{ $student['user_profile']['username'] ?? '—' }}</td>
                     <td>{{ $student['contactno'] }}</td>
                     <td>{{ $student['degree']['name'] ?? '—' }}</td>
+                    <td>
+                        @if(! empty($student['courses']))
+                            @foreach($student['courses'] as $course)
+                                <div>
+                                    {{ $course['title'] }}
+                                    @if(! empty($course['pivot']['created_at']))
+                                        <small>({{ $course['pivot']['created_at'] }})</small>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @else
+                            —
+                        @endif
+                    </td>
                     <td>{{ $student['description'] }}</td>
                     <td class="actions-cell">
                         <a href="{{ route('studentMgmt.show', $student['id']) }}" class="link-btn link-view">
@@ -71,7 +88,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7">
+                    <td colspan="9">
                         <div class="empty-state">
                             <svg width="52" height="52" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>

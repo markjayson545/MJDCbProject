@@ -61,7 +61,7 @@
 </div>
 
 {{-- Delete zone --}}
-<div class="delete-zone">
+<div class="delete-zone p-5">
     <div class="delete-zone-text">
         <strong>Danger Zone</strong>
         Permanently remove this degree record. This action cannot be undone.
