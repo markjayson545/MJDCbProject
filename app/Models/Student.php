@@ -21,6 +21,8 @@ class Student extends Model
         'description',
         // Add degree_id foreign key
         'degree_id',
+        // Add course_id as foreign key, many to many relationship
+        'course_id',
     ];
 
     /**

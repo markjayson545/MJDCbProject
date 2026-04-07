@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <p style="color: #10b981; font-size: 20px; font-weight: bold; text-align: center;">
+    <p>
         "The pangasinan state university shall be recognized
         as an asean premier state university that provides
         quality education and satisfactory extensions and production.
