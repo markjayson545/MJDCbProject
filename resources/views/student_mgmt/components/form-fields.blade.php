@@ -1,51 +1,4 @@
 {{-- $student is optional; falls back to old() values --}}
-<style>
-.ff-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-}
-.ff-group label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #475569;
-    text-transform: uppercase;
-    letter-spacing: 0.55px;
-    font-family: 'Outfit', sans-serif;
-}
-.ff-group label .req { color: #e94560; margin-left: 2px; }
-.ff-group input,
-.ff-group textarea,
-.ff-group select {
-    width: 100%;
-    padding: 0.65rem 0.9rem;
-    font-size: 0.9rem;
-    font-family: 'Outfit', sans-serif;
-    color: #1e293b;
-    background: #f8fafd;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
-    outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-    -webkit-appearance: none;
-}
-.ff-group input:focus,
-.ff-group textarea:focus,
-.ff-group select:focus {
-    border-color: #e94560;
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.1);
-}
-.ff-group input::placeholder,
-.ff-group textarea::placeholder { color: #94a3b8; }
-.ff-group textarea { resize: vertical; min-height: 100px; line-height: 1.55; }
-.ff-hint {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    font-family: 'Outfit', sans-serif;
-}
-</style>
-
 <div class="ff-group">
     <label for="fname">First Name <span class="req">*</span></label>
     <input type="text" name="fname" id="fname"
@@ -92,7 +45,7 @@
         @endforeach
     </select>
     <span class="ff-hint">Optional — associate a degree to the student</span>
-    <button type="button" class="btn btn-ghost" style="margin-top: 0.5rem; width: max-content" onclick="window.location='{{ route('degrees.index') }}'">
+    <button type="button" class="btn btn-ghost" onclick="window.location='{{ route('degrees.index') }}'">
         Manage Degrees
     </button>
 </div>

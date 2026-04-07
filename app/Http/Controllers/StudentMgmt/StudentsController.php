@@ -14,13 +14,15 @@ class StudentsController extends Controller
      */
     public function index()
     {
-        $students = Student::with('degree')->paginate(10);
-        // Convert loaded models to arrays so blades that use array access also see relations
+        // Join students with degree table to get degree name, and paginate results
+        $students = Student::with('degree')->paginate(2);
+        // Add degree names to each student record for easier access in the view
         $students->getCollection()->transform(function ($s) {
             return $s->toArray();
         });
+        error_log('Fetched students with degrees: '.json_encode($students));
 
-        return view('student_mgmt.students', compact('students'));
+        return view('student_mgmt.students')->with('students', $students);
     }
 
     /**
