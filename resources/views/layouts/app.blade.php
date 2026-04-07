@@ -7,17 +7,34 @@
 
         <title>@yield('title', config('app.name', 'Laravel'))</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
+    <body class="programming-mode">
         @include('components.header')
         @include('components.navigation')
-        @include('components.main-body')
+
+        @if(isset($slot))
+            <main class="main-wrapper">
+                <div class="main-container">
+                    @if(isset($header))
+                        <div class="main-page-header">
+                            <div class="main-page-header-left">
+                                <h2 class="main-page-title">{{ strip_tags($header) }}</h2>
+                            </div>
+                        </div>
+                        <hr class="main-divider">
+                    @endif
+
+                    <div class="main-card">
+                        {{ $slot }}
+                    </div>
+                </div>
+            </main>
+        @else
+            @include('components.main-body')
+        @endif
+
         @include('components.footer')
     </body>
 </html>

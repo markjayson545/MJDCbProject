@@ -1,20 +1,18 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
-</head>
-<body>
-    <p style="color: #10b981; font-size: 20px; font-weight: bold; text-align: center;">
-        "The pangasinan state university shall be recognized
-        as an asean premier state university that provides
-        quality education and satisfactory extensions and production.
-        We commit our expertise and resources to produce professionals
-        who meet the expectations of the industry and other interested
-        parties in the national and international community.
-        We shall continously improve our operations in response to the
-        changing environment and in support of the institution's strategic direction."
-    </p>
-</body>
-</html>
+@extends('layouts.app')
+
+@section('title', 'PSU EOMS Policy')
+
+@section('page-title', 'PSU EOMS Policy')
+@section('page-subtitle', 'Quality policy statement')
+
+@section('content')
+    <div class="detail-card">
+        <p class="info-card-value">
+            The Pangasinan State University shall be recognized as an ASEAN premier state university that provides quality
+            education and satisfactory extension and production services. We commit our expertise and resources to produce
+            professionals who meet the expectations of industry and other interested parties in the national and international
+            community. We shall continuously improve our operations in response to the changing environment and in support of
+            the institution's strategic direction.
+        </p>
+    </div>
+@endsection
