@@ -4,6 +4,7 @@ namespace App\Http\Controllers\StudentMgmt;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Student;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -75,7 +76,14 @@ class CoursesController extends Controller
      */
     public function edit(string $id): View|RedirectResponse
     {
-        $course = Course::query()->find($id);
+        $course = Course::query()
+            ->with([
+                'students' => function ($query) {
+                    $query->orderBy('lname')->orderBy('fname');
+                },
+            ])
+            ->withCount('students')
+            ->find($id);
 
         if (! $course) {
             Log::warning('Course not found on edit.', ['course_id' => $id]);
@@ -83,7 +91,15 @@ class CoursesController extends Controller
             return redirect()->route('courses.index')->with('error', 'Subject not found.');
         }
 
-        return view('student_mgmt.course.edit')->with('course', $course->toArray());
+        $students = Student::query()
+            ->orderBy('lname')
+            ->orderBy('fname')
+            ->get(['id', 'fname', 'lname', 'email'])
+            ->toArray();
+
+        return view('student_mgmt.course.edit')
+            ->with('course', $course->toArray())
+            ->with('students', $students);
     }
 
     /**
@@ -91,8 +107,10 @@ class CoursesController extends Controller
      */
     public function update(Request $request, string $id): RedirectResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255|unique:courses,title,'.$id,
+            'student_ids' => 'nullable|array',
+            'student_ids.*' => 'integer|exists:students,id',
         ]);
 
         $course = Course::query()->find($id);
@@ -105,10 +123,16 @@ class CoursesController extends Controller
 
         try {
             $course->update([
-                'title' => $request->input('title'),
+                'title' => $validated['title'],
             ]);
 
-            Log::info('Updated course.', ['course_id' => $course->id, 'title' => $course->title]);
+            $course->students()->sync($validated['student_ids'] ?? []);
+
+            Log::info('Updated course.', [
+                'course_id' => $course->id,
+                'title' => $course->title,
+                'enrolled_students_count' => $course->students()->count(),
+            ]);
         } catch (\Throwable $throwable) {
             Log::error('Failed to update course.', ['course_id' => $id, 'error' => $throwable->getMessage()]);
 

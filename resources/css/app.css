@@ -449,6 +449,83 @@ a:hover {
     background: rgba(8, 145, 178, 0.26);
 }
 
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.42rem;
+    padding: 0.52rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: all 180ms ease;
+}
+
+.btn svg {
+    display: block;
+    flex-shrink: 0;
+}
+
+.btn-primary {
+    color: var(--clr-accent);
+    border-color: rgba(34, 197, 94, 0.42);
+    background: rgba(34, 197, 94, 0.12);
+}
+
+.btn-primary:hover {
+    color: var(--clr-text);
+    border-color: rgba(34, 197, 94, 0.6);
+    background: rgba(34, 197, 94, 0.24);
+    box-shadow: 0 0 14px rgba(34, 197, 94, 0.24);
+}
+
+.btn-blue {
+    color: var(--clr-info);
+    border-color: rgba(34, 211, 238, 0.42);
+    background: rgba(34, 211, 238, 0.12);
+}
+
+.btn-blue:hover {
+    color: var(--clr-text);
+    border-color: rgba(34, 211, 238, 0.58);
+    background: rgba(34, 211, 238, 0.24);
+    box-shadow: 0 0 14px rgba(34, 211, 238, 0.24);
+}
+
+.btn-ghost {
+    color: var(--clr-text-soft);
+    border-color: rgba(148, 163, 184, 0.3);
+    background: rgba(15, 23, 42, 0.42);
+}
+
+.btn-ghost:hover {
+    color: var(--clr-text);
+    border-color: rgba(148, 163, 184, 0.52);
+    background: rgba(30, 41, 59, 0.7);
+}
+
+.btn-danger {
+    color: #fda4af;
+    border-color: rgba(244, 63, 94, 0.52);
+    background: rgba(244, 63, 94, 0.14);
+}
+
+.btn-danger:hover {
+    color: #fff;
+    border-color: rgba(244, 63, 94, 0.68);
+    background: rgba(244, 63, 94, 0.28);
+    box-shadow: 0 0 14px rgba(244, 63, 94, 0.24);
+}
+
 /* Buttons, labels, inputs */
 .cyber-label {
     display: inline-block;
