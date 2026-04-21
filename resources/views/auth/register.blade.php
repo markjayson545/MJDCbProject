@@ -9,7 +9,7 @@
         </div>
 
         <!-- Registration Form -->
-        <form action="{{ route('register.store') }}" method="POST" class="register-form">
+        <form action="{{ route('register.user') }}" method="POST" class="register-form">
             @csrf
 
             <!-- Name Field -->

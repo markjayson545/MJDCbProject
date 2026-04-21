@@ -2,16 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
     /**
+     * Display the student dashboard.
+     */
+    public function dashboard(int $id): \Illuminate\View\View
+    {
+        $student = Student::with(['courses', 'degree'])->findOrFail($id);
+
+        return view('student_dashboard.student_dashboard', ['student' => $student]);
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return "Displaying all students";
+        return 'Displaying all students';
     }
 
     /**
@@ -19,7 +30,7 @@ class StudentController extends Controller
      */
     public function create()
     {
-        return "Showing form to create student";
+        return 'Showing form to create student';
     }
 
     /**
@@ -27,7 +38,7 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        return "Saving a new student";
+        return 'Saving a new student';
     }
 
     /**
@@ -51,7 +62,7 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        return "Updating student";
+        return 'Updating student';
     }
 
     /**
@@ -59,6 +70,6 @@ class StudentController extends Controller
      */
     public function destroy(string $id)
     {
-        return "Deleting student";
+        return 'Deleting student';
     }
 }

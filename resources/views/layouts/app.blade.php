@@ -12,7 +12,9 @@
     </head>
     <body class="programming-mode">
         @include('components.header')
-        @include('components.navigation')
+        @if(request()->routeIs('studentDashboard') || request()->routeIs('password.update.page'))
+            @include('components.navigation')
+        @endif
 
         @if(isset($slot))
             <main class="main-wrapper">

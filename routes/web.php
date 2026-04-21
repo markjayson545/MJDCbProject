@@ -85,3 +85,8 @@ Route::put('/passwordUpdate', [UserController::class, 'updatePassword'])->name('
 Route::get('/studentSettings', function () {
     return view('student_mgmt.settings');
 })->name('studentSettings');
+
+Route::get('/register', [UserController::class, 'registerPage'])->name('register')->middleware('maintenance');
+Route::post('/registerUser', [UserController::class, 'register'])->name('register.user')->middleware('maintenance');
+
+Route::get('/studentDashboard/{id}', [StudentController::class, 'dashboard'])->name('studentDashboard')->middleware('maintenance');
