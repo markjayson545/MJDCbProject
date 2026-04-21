@@ -1,84 +1,87 @@
-@extends('layouts.guest')
-
-@section('content')
-    <div class="register-container">
+<x-guest-layout>
+    <div class="update-password-container">
         <!-- Header -->
-        <div class="register-header">
-            <h1 class="register-title">Create Your Account</h1>
-            <p class="register-subtitle">Join our coding bootcamp community</p>
+        <div class="update-password-header">
+            <h1 class="update-password-title">Update Your Password</h1>
+            <p class="update-password-subtitle">Secure your account with a new password</p>
+            @if (isset($user))
+                <p class="update-password-user">
+                    <span class="font-semibold">User:</span>
+                    {{ $user->username }}
+                </p>
+            @endif
         </div>
 
-        <!-- Registration Form -->
-        <form action="{{ route('register.store') }}" method="POST" class="register-form">
+        <!-- Success Message -->
+        @if (session('status'))
+            <div class="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 text-green-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-sm font-semibold text-green-400">Success</h3>
+                        <p class="text-sm text-green-300 mt-1">{{ session('status') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Error Messages -->
+        @if ($errors->any())
+            <div class="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 text-red-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-sm font-semibold text-red-400 mb-2">Update Failed</h3>
+                        <ul class="space-y-2">
+                            @foreach ($errors->all() as $error)
+                                <li class="text-sm text-red-300">• {{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Update Password Form -->
+        <form action="{{ route('password.update') }}" method="POST" class="update-password-form">
             @csrf
+            @method('PUT')
 
-            <!-- Name Field -->
+            @if (session('user_id'))
+                <input type="hidden" name="user_id" value="{{ session('user_id') }}" />
+            @endif
+
+            <!-- Current Password Field -->
             <div class="form-group">
-                <label for="name" class="form-label">
-                    Full Name
+                <label for="current_password" class="form-label">
+                    Current Password
                     <span class="required-indicator">*</span>
                 </label>
                 <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    class="form-input @error('name') input-error @enderror"
-                    value="{{ old('name') }}"
-                    placeholder="John Doe"
+                    type="password"
+                    id="current_password"
+                    name="current_password"
+                    class="form-input @error('current_password') input-error @enderror"
                     required
-                    autocomplete="name"
+                    autocomplete="current-password"
                 />
-                @error('name')
+                @error('current_password')
                     <span class="form-error">{{ $message }}</span>
                 @enderror
             </div>
 
-            <!-- Email Field -->
-            <div class="form-group">
-                <label for="email" class="form-label">
-                    Email Address
-                    <span class="required-indicator">*</span>
-                </label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    class="form-input @error('email') input-error @enderror"
-                    value="{{ old('email') }}"
-                    placeholder="you@example.com"
-                    required
-                    autocomplete="email"
-                />
-                @error('email')
-                    <span class="form-error">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Username Field -->
-            <div class="form-group">
-                <label for="username" class="form-label">
-                    Username
-                    <span class="required-indicator">*</span>
-                </label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    class="form-input @error('username') input-error @enderror"
-                    value="{{ old('username') }}"
-                    placeholder="johndoe123"
-                    required
-                    autocomplete="username"
-                />
-                @error('username')
-                    <span class="form-error">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <!-- Password Field -->
+            <!-- New Password Field -->
             <div class="form-group">
                 <label for="password" class="form-label">
-                    Password
+                    New Password
                     <span class="required-indicator">*</span>
                 </label>
                 <input
@@ -92,7 +95,6 @@
                 @error('password')
                     <span class="form-error">{{ $message }}</span>
                 @enderror
-                <span class="form-hint">Minimum 8 characters with uppercase, lowercase, and numbers</span>
             </div>
 
             <!-- Confirm Password Field -->
@@ -115,34 +117,27 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" class="btn-register">
-                Create Account
+            <button type="submit" class="btn-update-password">
+                Update Password
             </button>
 
-            <!-- Login Link -->
-            <div class="register-footer">
-                <p class="register-footer-text">
-                    Already have an account?
-                    <a href="{{ route('login') }}" class="register-footer-link">Sign in here</a>
-                </p>
-            </div>
         </form>
     </div>
 
     <style>
-        .register-container {
+        .update-password-container {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
             width: 100%;
         }
 
-        .register-header {
+        .update-password-header {
             text-align: center;
             margin-bottom: 0.5rem;
         }
 
-        .register-title {
+        .update-password-title {
             font-size: 1.875rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
@@ -153,13 +148,23 @@
             background-clip: text;
         }
 
-        .register-subtitle {
+        .update-password-subtitle {
             font-size: 0.95rem;
             color: var(--clr-text-soft);
             margin: 0;
         }
 
-        .register-form {
+        .update-password-user {
+            font-size: 0.9rem;
+            color: var(--clr-text);
+            margin-top: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background-color: rgba(34, 211, 238, 0.1);
+            border-left: 2px solid var(--clr-info);
+            border-radius: 0.25rem;
+        }
+
+        .update-password-form {
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
@@ -226,7 +231,7 @@
             font-weight: 400;
         }
 
-        .btn-register {
+        .btn-update-password {
             padding: 0.875rem 1.5rem;
             border: none;
             border-radius: var(--radius-sm);
@@ -241,43 +246,38 @@
             margin-top: 0.5rem;
         }
 
-        .btn-register:hover {
+        .btn-update-password:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(34, 211, 238, 0.25);
         }
 
-        .btn-register:active {
+        .btn-update-password:active {
             transform: translateY(0);
             box-shadow: 0 4px 12px rgba(34, 211, 238, 0.2);
         }
 
-        .register-footer {
+        .update-password-footer {
             margin-top: 1rem;
             text-align: center;
         }
 
-        .register-footer-text {
+        .update-password-cancel-link {
             font-size: 0.875rem;
             color: var(--clr-text-soft);
-            margin: 0;
-        }
-
-        .register-footer-link {
-            color: var(--clr-info);
-            font-weight: 600;
+            text-decoration: none;
             transition: all 200ms ease;
         }
 
-        .register-footer-link:hover {
+        .update-password-cancel-link:hover {
             color: var(--clr-accent);
         }
 
         @media (max-width: 640px) {
-            .register-title {
+            .update-password-title {
                 font-size: 1.5rem;
             }
 
-            .register-subtitle {
+            .update-password-subtitle {
                 font-size: 0.875rem;
             }
 
@@ -286,4 +286,5 @@
             }
         }
     </style>
-@endsection
+</x-guest-layout>
+

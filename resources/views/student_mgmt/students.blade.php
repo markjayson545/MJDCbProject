@@ -26,7 +26,6 @@
             <tr>
                 <th>#</th>
                 <th>Student Name</th>
-                <th>Email</th>
                 <th>Linked Profile</th>
                 <th>Contact No.</th>
                 <th>Degree</th>
@@ -42,7 +41,6 @@
                     <td>
                         <span class="student-name">{{ $student['lname'] }}, {{ $student['fname'] }} {{ $student['mname'] }}</span>
                     </td>
-                    <td>{{ $student['email'] }}</td>
                     <td>{{ $student['user_profile']['username'] ?? '—' }}</td>
                     <td>{{ $student['contactno'] }}</td>
                     <td>{{ $student['degree']['name'] ?? '—' }}</td>

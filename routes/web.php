@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\CalculateController;
 use App\Http\Controllers\ClientController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PSUController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentMgmt\CoursesController;
@@ -19,15 +19,6 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
-
 // Recitation
 Route::get('/add', [CalculateController::class, 'add'])->name('calculate.add');
 Route::get('/subtract', [CalculateController::class, 'subtract'])->name('calculate.store');
@@ -48,9 +39,10 @@ Route::resource('/students', StudentController::class);
 
 Route::get('/greetings', [ClientController::class, 'displayGreetings'])->name('greetings');
 
-Route::get('/', function () {
-    return view('client.dashboard');
-})->name('dashboard');
+// Route::get('/', function () {
+//    return view('client.dashboard');
+// })->name('dashboard')->middleware('maintenance');
+
 Route::get('/about', function () {
     return view('client.aboutUs');
 })->name('about');
@@ -58,16 +50,38 @@ Route::get('/client-profile', function () {
     return view('client.profile');
 })->name('client.profile');
 
-Route::get('/studentMgmtHome', [StudentsController::class, 'displayHome'])->name('studentMgmtHome');
-
-Route::get('/studentMgmtStudents', [StudentsController::class, 'displayStudents'])->name('studentMgmtStudents');
-
-Route::get('/studentMgmtAbout', [StudentsController::class, 'displayAbout'])->name('studentMgmtAbout');
-
-Route::resource('/studentMgmt', StudentsController::class);
-
 Route::resource('/degrees', DegreesController::class);
 
 Route::resource('/courses', CoursesController::class);
 
 Route::resource('/user-profiles', UserProfileController::class);
+
+Route::get('/studentMgmtHome', [StudentsController::class, 'displayHome'])
+    ->name('studentMgmtHome')
+    ->middleware('maintenance');
+
+Route::get('/maintenance', function () {
+    return view('maintenance');
+})->name('maintenance');
+
+Route::middleware('group_middleware')->group(function () {
+
+    Route::get('/studentMgmtStudents', [StudentsController::class, 'displayStudents'])->name('studentMgmtStudents');
+
+    Route::get('/studentMgmtAbout', [StudentsController::class, 'displayAbout'])->name('studentMgmtAbout');
+
+    Route::resource('/studentMgmt', StudentsController::class);
+});
+
+Route::get('/register', function () {
+    return view('auth.register');
+})->name('register');
+
+Route::get('/', [UserController::class, 'login'])->name('login')->middleware('maintenance');
+Route::get('/updatePasswordPage', [UserController::class, 'showUpdatePasswordForm'])->name('password.update.page');
+Route::post('/login', [UserController::class, 'authenticate'])->name('login.authenticate');
+Route::put('/passwordUpdate', [UserController::class, 'updatePassword'])->name('password.update');
+
+Route::get('/studentSettings', function () {
+    return view('student_mgmt.settings');
+})->name('studentSettings');

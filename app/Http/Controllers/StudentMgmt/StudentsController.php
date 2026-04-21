@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Degree;
 use App\Models\Student;
+use App\Models\UserAccount;
 use App\Models\UserProfile;
+use Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -20,13 +22,13 @@ class StudentsController extends Controller
     public function index(): View
     {
         $students = Student::with(['degree', 'courses', 'userProfile'])->paginate(10);
-
+        $userAccounts = UserAccount::all();
         $students->getCollection()->transform(function ($s) {
             return $s->toArray();
         });
         Log::info('Fetched students list.', ['count' => $students->total()]);
 
-        return view('student_mgmt.students')->with('students', $students);
+        return view('student_mgmt.students')->with('students', $students)->with('userAccounts', $userAccounts);
     }
 
     /**
@@ -74,6 +76,8 @@ class StudentsController extends Controller
             'user_profile_id' => 'nullable|integer|exists:user_profiles,id|unique:students,user_profile_id',
             'course_ids' => 'nullable|array',
             'course_ids.*' => 'integer|exists:courses,id',
+            'username' => 'required|string|max:255|min:2',
+            'password' => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
@@ -87,15 +91,21 @@ class StudentsController extends Controller
         try {
             $validated = $validator->validated();
 
+            $userAccount = UserAccount::create([
+                'username' => $validated['username'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'student',
+            ]);
             $student = Student::create([
                 'fname' => $validated['fname'],
                 'mname' => $validated['mname'] ?? null,
                 'lname' => $validated['lname'],
                 'contactno' => $validated['contactno'],
-                'email' => $validated['email'],
                 'description' => $validated['description'] ?? null,
                 'degree_id' => $validated['degree_id'] ?? null,
                 'user_profile_id' => $validated['user_profile_id'] ?? null,
+                'user_account_id' => $userAccount->id,
             ]);
 
             $student->courses()->sync($validated['course_ids'] ?? []);
@@ -141,12 +151,17 @@ class StudentsController extends Controller
             ->orderBy('username')
             ->get()
             ->toArray();
+        $userAccounts = UserAccount::query()
+            ->whereDoesntHave('student')
+            ->orWhere('id', $student->user_profile_id)
+            ->orderBy('username');
 
         return view('student_mgmt.edit')
             ->with('student', $student->toArray())
             ->with('degrees', $degrees)
             ->with('courses', $courses)
-            ->with('userProfiles', $userProfiles);
+            ->with('userProfiles', $userProfiles)
+            ->with('userAccounts', $userAccounts);
     }
 
     /**
@@ -189,7 +204,6 @@ class StudentsController extends Controller
                 'mname' => $validated['mname'] ?? null,
                 'lname' => $validated['lname'],
                 'contactno' => $validated['contactno'],
-                'email' => $validated['email'],
                 'description' => $validated['description'] ?? null,
                 'degree_id' => $validated['degree_id'] ?? null,
                 'user_profile_id' => $validated['user_profile_id'] ?? null,
@@ -226,5 +240,10 @@ class StudentsController extends Controller
         }
 
         return redirect()->route('studentMgmt.index')->with('success', 'Student deleted successfully.');
+    }
+
+    public function maintenance()
+    {
+        return 'Down For Maintenance. Please Check Back Later.';
     }
 }

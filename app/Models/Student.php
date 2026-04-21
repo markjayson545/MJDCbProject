@@ -19,9 +19,9 @@ class Student extends Model
         'mname',
         'lname',
         'contactno',
-        'email',
         'description',
         'degree_id',
+        'user_account_id',
         'user_profile_id',
     ];
 
@@ -40,5 +40,10 @@ class Student extends Model
     public function userProfile(): BelongsTo
     {
         return $this->belongsTo(UserProfile::class);
+    }
+
+    public function userAccount(): BelongsTo
+    {
+        return $this->hasOne(UserAccount::class);
     }
 }

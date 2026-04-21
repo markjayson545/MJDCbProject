@@ -36,6 +36,11 @@ class UserProfileController extends Controller
      */
     public function store(StoreUserProfileRequest $request): RedirectResponse
     {
+        $request->validate([
+            'username' => ['required', 'string', 'max:255', 'unique:user_profiles,username'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
         try {
             UserProfile::query()->create([
                 'username' => $request->string('username')->toString(),

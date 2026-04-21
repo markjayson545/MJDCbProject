@@ -7,7 +7,7 @@
 
 @section('content')
 {{-- Header --}}
-<div class="student-header">
+<div class="student-header p-6 mb-6">
     <div class="student-header-banner">
         <div class="student-avatar">DG</div>
         <div class="student-header-info">
@@ -28,7 +28,7 @@
 </div>
 
 {{-- Details --}}
-<div class="details-card">
+<div class="details-card mb-6">
     <div class="details-card-header">Degree Information</div>
 
     <div class="detail-row">
@@ -50,7 +50,7 @@
 </div>
 
 {{-- Actions --}}
-<div class="actions-bar">
+<div class="actions-bar mb-6">
     <a href="{{ route('degrees.edit', $degree['id']) }}" class="btn btn-blue">
         <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>

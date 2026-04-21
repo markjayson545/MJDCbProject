@@ -131,3 +131,25 @@
     @enderror
     <span class="ff-hint">Optional — 280 characters max</span>
 </div>
+
+<div class="ff-group">
+    <label for="username">Username <span class="req">*</span></label>
+    <input type="text" name="username" id="username"
+           value="{{ old('username', $student['username'] ?? '') }}"
+           required placeholder="e.g. markjayson545">
+    @error('username')
+    <span class="ff-hint" style="color:#ef4444;">{{ $message }}</span>
+    @enderror
+</div>
+
+<div class="ff-group">
+    <label for="password">Password <span class="req">*</span></label>
+    <input type="password" name="password" id="password"
+           value="{{ old('password', $student['password'] ?? '') }}"
+           required placeholder="e.g. ••••••••">
+    @error('password')
+    <span class="ff-hint" style="color:#ef4444;">{{ $message }}</span>
+    @enderror
+</div>
+
+

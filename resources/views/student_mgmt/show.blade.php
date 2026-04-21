@@ -11,7 +11,7 @@
     $initials = strtoupper(substr($student['fname'] ?? 'S', 0, 1) . substr($student['lname'] ?? '', 0, 1));
 @endphp
 
-<div class="student-header p-5">
+<div class="student-header p-6 mb-6">
     <div class="student-header-banner">
         <div class="student-avatar">{{ $initials }}</div>
         <div class="student-header-info">
@@ -20,10 +20,6 @@
         </div>
     </div>
     <div class="student-header-meta">
-        <div class="meta-item">
-            <strong>Email</strong>
-            {{ $student['email'] }}
-        </div>
         <div class="meta-item">
             <strong>Contact</strong>
             {{ $student['contactno'] }}
@@ -40,7 +36,7 @@
 </div>
 
 {{-- Details --}}
-<div class="details-card">
+<div class="details-card mb-6">
     <div class="details-card-header">Student Information</div>
 
     <div class="detail-row">
@@ -58,10 +54,6 @@
     <div class="detail-row">
         <span class="detail-key">Contact Number</span>
         <span class="detail-val">{{ $student['contactno'] }}</span>
-    </div>
-    <div class="detail-row">
-        <span class="detail-key">Email Address</span>
-        <span class="detail-val">{{ $student['email'] }}</span>
     </div>
     <div class="detail-row">
         <span class="detail-key">Degree</span>
@@ -113,7 +105,7 @@
 </div>
 
 {{-- Actions --}}
-<div class="actions-bar">
+<div class="actions-bar mb-6">
     <a href="{{ route('studentMgmt.edit', $student['id']) }}" class="btn btn-blue flex flex-row items-center">
         <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -124,8 +116,8 @@
 </div>
 
 {{-- Delete zone --}}
-<div class="delete-zone p-5">
-    <div class="delete-zone-text p-5">
+<div class="delete-zone p-6">
+    <div class="delete-zone-text">
         <strong>Danger Zone</strong>
         Permanently remove this student record. This action cannot be undone.
     </div>

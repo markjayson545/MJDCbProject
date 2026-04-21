@@ -12,11 +12,6 @@
     </head>
     <body class="programming-mode">
         <div class="welcome-wrapper">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-slate-200" />
-                </a>
-            </div>
 
             <div class="liquid-glass w-full sm:max-w-md mt-6 px-6 py-5 overflow-hidden">
                 {{ $slot }}
