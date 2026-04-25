@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Middleware\DownForMaintenanceMW;
-use App\Http\Middleware\MiddlewareOne;
-use App\Http\Middleware\MiddlewareTwo;
-use App\Http\Middleware\PromotionMW;
+use App\Http\Middleware\EnsureStudentPasswordIsUpdated;
+use App\Http\Middleware\EnsureUserAccountIsAuthenticated;
+use App\Http\Middleware\EnsureUserAccountRole;
+use App\Http\Middleware\RouteGuard;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,16 +17,22 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         // Global Middleware
-        $middleware->append([
-            PromotionMW::class,
-        ]);
+        //        $middleware->append([
+        //            PromotionMW::class,
+        //        ]);
         // One MiddleWare
-        $middleware->alias(['maintenance' => DownForMaintenanceMW::class]);
-        // Group MiddleWare
-        $middleware->group('group_middleware', [
-            MiddlewareOne::class,
-            MiddlewareTwo::class,
+        $middleware->alias([
+            'maintenance' => DownForMaintenanceMW::class,
+            'user.account' => EnsureUserAccountIsAuthenticated::class,
+            'user.account.role' => EnsureUserAccountRole::class,
+            'student.password.updated' => EnsureStudentPasswordIsUpdated::class,
+            'route.guard' => RouteGuard::class,
         ]);
+        //        // Group MiddleWare
+        //        $middleware->group('group_middleware', [
+        //            MiddlewareOne::class,
+        //            MiddlewareTwo::class,
+        //        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

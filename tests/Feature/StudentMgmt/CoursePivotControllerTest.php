@@ -17,7 +17,7 @@ test('it displays pivot linked students on course details page', function () {
 
     $course->students()->sync([$student->id]);
 
-    $response = $this->get(route('courses.show', $course->id));
+    $response = $this->get(route('admin.courses.show', $course->id));
 
     $response->assertSuccessful()
         ->assertSee('Students (Pivot)')
@@ -48,7 +48,7 @@ test('it displays enrollment management details on course edit page', function (
 
     $course->students()->sync([$enrolledStudent->id]);
 
-    $response = $this->get(route('courses.edit', $course->id));
+    $response = $this->get(route('admin.courses.edit', $course->id));
 
     $response->assertSuccessful()
         ->assertSee('Manage Enrolled Students')
@@ -91,12 +91,12 @@ test('it syncs enrolled students when updating a course', function () {
 
     $course->students()->sync([$existingStudent->id]);
 
-    $response = $this->put(route('courses.update', $course->id), [
+    $response = $this->put(route('admin.courses.update', $course->id), [
         'title' => 'Programming 1A',
         'student_ids' => [$newStudentA->id, $newStudentB->id],
     ]);
 
-    $response->assertRedirect(route('courses.edit', $course->id));
+    $response->assertRedirect(route('admin.courses.edit', $course->id));
 
     $this->assertDatabaseHas('courses', [
         'id' => $course->id,
@@ -130,9 +130,9 @@ test('it removes pivot rows when deleting a course', function () {
 
     $course->students()->sync([$student->id]);
 
-    $response = $this->delete(route('courses.destroy', $course->id));
+    $response = $this->delete(route('admin.courses.destroy', $course->id));
 
-    $response->assertRedirect(route('courses.index'));
+    $response->assertRedirect(route('admin.courses.index'));
     $this->assertDatabaseMissing('courses', ['id' => $course->id]);
     $this->assertDatabaseMissing('course_student', [
         'course_id' => $course->id,

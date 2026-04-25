@@ -26,7 +26,7 @@ test('it displays linked profile and pivot-backed subjects on student details pa
 
     $student->courses()->sync([$courseA->id, $courseB->id]);
 
-    $response = $this->get(route('studentMgmt.show', $student->id));
+    $response = $this->get(route('admin.students.show', $student->id));
 
     $response->assertStatus(200)
         ->assertSee('Linked User Profile')

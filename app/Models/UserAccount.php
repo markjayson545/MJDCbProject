@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class UserAccount extends Model
 {
@@ -15,10 +15,23 @@ class UserAccount extends Model
         'role',
         'password',
         'is_active',
+        'password_changed_at',
     ];
 
-    public function students(): BelongsTo
+    protected function casts(): array
     {
-        return $this->hasOne(Student::class);
+        return [
+            'password_changed_at' => 'datetime',
+        ];
+    }
+
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class, 'user_account_id');
+    }
+
+    public function students(): HasOne
+    {
+        return $this->student();
     }
 }

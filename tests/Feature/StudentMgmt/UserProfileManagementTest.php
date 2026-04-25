@@ -5,13 +5,13 @@ use App\Models\UserProfile;
 use Illuminate\Support\Facades\Hash;
 
 test('it creates a user profile from management page', function () {
-    $response = $this->post(route('user-profiles.store'), [
+    $response = $this->post(route('admin.user-profiles.store'), [
         'username' => 'student_profile_1',
         'password' => 'secret-pass-123',
         'password_confirmation' => 'secret-pass-123',
     ]);
 
-    $response->assertRedirect(route('user-profiles.index'));
+    $response->assertRedirect(route('admin.user-profiles.index'));
 
     $profile = UserProfile::query()->where('username', 'student_profile_1')->first();
 
@@ -20,13 +20,13 @@ test('it creates a user profile from management page', function () {
 });
 
 test('it validates required fields when creating a user profile', function () {
-    $response = $this->from(route('user-profiles.create'))->post(route('user-profiles.store'), [
+    $response = $this->from(route('admin.user-profiles.create'))->post(route('admin.user-profiles.store'), [
         'username' => 'ab',
         'password' => 'short',
         'password_confirmation' => 'different',
     ]);
 
-    $response->assertRedirect(route('user-profiles.create'));
+    $response->assertRedirect(route('admin.user-profiles.create'));
     $response->assertSessionHasErrors(['username', 'password']);
 });
 
@@ -36,7 +36,7 @@ test('it links a student to a user profile during student creation', function ()
         'password' => Hash::make('secret-pass-123'),
     ]);
 
-    $response = $this->post(route('studentMgmt.store'), [
+    $response = $this->post(route('admin.students.store'), [
         'fname' => 'Juan',
         'mname' => 'Santos',
         'lname' => 'Dela Cruz',
@@ -47,7 +47,7 @@ test('it links a student to a user profile during student creation', function ()
         'course_ids' => [],
     ]);
 
-    $response->assertRedirect(route('studentMgmt.index'));
+    $response->assertRedirect(route('admin.students.index'));
 
     $student = Student::query()->where('email', 'juan@example.com')->first();
 
@@ -71,9 +71,9 @@ test('it prevents deleting a linked user profile', function () {
         'user_profile_id' => $profile->id,
     ]);
 
-    $response = $this->delete(route('user-profiles.destroy', $profile->id));
+    $response = $this->delete(route('admin.user-profiles.destroy', $profile->id));
 
-    $response->assertRedirect(route('user-profiles.index'));
+    $response->assertRedirect(route('admin.user-profiles.index'));
     $response->assertSessionHas('error');
     $this->assertDatabaseHas('user_profiles', ['id' => $profile->id]);
 });
@@ -84,12 +84,12 @@ test('it validates update payload for a user profile', function () {
         'password' => Hash::make('secret-pass-123'),
     ]);
 
-    $response = $this->from(route('user-profiles.edit', $profile->id))->put(route('user-profiles.update', $profile->id), [
+    $response = $this->from(route('admin.user-profiles.edit', $profile->id))->put(route('admin.user-profiles.update', $profile->id), [
         'username' => 'a',
         'password' => 'short',
         'password_confirmation' => 'mismatch',
     ]);
 
-    $response->assertRedirect(route('user-profiles.edit', $profile->id));
+    $response->assertRedirect(route('admin.user-profiles.edit', $profile->id));
     $response->assertSessionHasErrors(['username', 'password']);
 });

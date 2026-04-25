@@ -51,12 +51,12 @@
         @endif
 
         <!-- Update Password Form -->
-        <form action="{{ route('password.update') }}" method="POST" class="update-password-form">
+        <form action="{{ route('student.password.update') }}" method="POST" class="update-password-form">
             @csrf
             @method('PUT')
 
-            @if (session('user_id'))
-                <input type="hidden" name="user_id" value="{{ session('user_id') }}" />
+            @if (session('user_account_id'))
+                <input type="hidden" name="user_account_id" value="{{ session('user_account_id') }}" />
             @endif
 
             <!-- Current Password Field -->
@@ -287,4 +287,3 @@
         }
     </style>
 </x-guest-layout>
-

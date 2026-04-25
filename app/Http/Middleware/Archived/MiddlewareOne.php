@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Http\Middleware\Archived;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class MiddlewareOne
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        echo 'Middleware One Executed<br>';
+
+        return $next($request);
+    }
+}

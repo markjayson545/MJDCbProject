@@ -14,7 +14,7 @@
                 <div class="auth-links">
                     @if (Route::has('login'))
                         @auth
-                            <a href="{{ url('/student_mgmt/home') }}" class="cyber-btn-primary">Enter Dashboard</a>
+                            <a href="{{ url('/admin/home') }}" class="cyber-btn-primary">Enter Dashboard</a>
                         @else
                             <a href="{{ route('login') }}" class="cyber-btn-primary">Initialize Login</a>
 

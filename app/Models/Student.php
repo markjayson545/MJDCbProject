@@ -19,6 +19,7 @@ class Student extends Model
         'mname',
         'lname',
         'contactno',
+        'email',
         'description',
         'degree_id',
         'user_account_id',
@@ -44,6 +45,6 @@ class Student extends Model
 
     public function userAccount(): BelongsTo
     {
-        return $this->hasOne(UserAccount::class);
+        return $this->belongsTo(UserAccount::class);
     }
 }
