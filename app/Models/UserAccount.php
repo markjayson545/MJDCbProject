@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class UserAccount extends Model
 {
+    use HasFactory;
+
     protected $table = 'user_accounts';
 
     protected $fillable = [
@@ -33,5 +36,10 @@ class UserAccount extends Model
     public function students(): HasOne
     {
         return $this->student();
+    }
+
+    public function teacher(): HasOne
+    {
+        return $this->hasOne(Teacher::class, 'user_account_id');
     }
 }

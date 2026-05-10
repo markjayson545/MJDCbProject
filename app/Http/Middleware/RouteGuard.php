@@ -23,7 +23,23 @@ class RouteGuard
             abort(403);
         }
 
+        if ($userRole === 'student' && Str::startsWith($currentPath, 'teacher')) {
+            abort(403);
+        }
+
+        if ($userRole === 'teacher' && Str::startsWith($currentPath, 'admin')) {
+            abort(403);
+        }
+
+        if ($userRole === 'teacher' && Str::startsWith($currentPath, 'student')) {
+            abort(403);
+        }
+
         if ($userRole === 'admin' && Str::startsWith($currentPath, 'student')) {
+            abort(403);
+        }
+
+        if ($userRole === 'admin' && Str::startsWith($currentPath, 'teacher')) {
             abort(403);
         }
 

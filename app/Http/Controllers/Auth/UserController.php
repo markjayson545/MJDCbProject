@@ -6,6 +6,7 @@ use App\Http\Controllers\Archived\Controller;
 use App\Http\Requests\Auth\CustomLoginRequest;
 use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Models\Student;
+use App\Models\Teacher;
 use App\Models\UserAccount;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,6 +67,16 @@ class UserController extends Controller
 
                 if ($user->role === 'admin') {
                     return redirect()->route('admin.dashboard');
+                }
+
+                if ($user->role === 'teacher') {
+                    if (! $this->storeTeacherSession($request, $user->id)) {
+                        return redirect()->back()->withErrors([
+                            'general' => 'Teacher profile not found. Please contact the administrator.',
+                        ])->withInput();
+                    }
+
+                    return redirect()->route('teacher.dashboard');
                 }
             }
 
@@ -189,6 +200,27 @@ class UserController extends Controller
         $request->session()->put([
             'student_id' => $student->id,
             'student' => $student,
+        ]);
+
+        return true;
+    }
+
+    private function storeTeacherSession(Request $request, int $userAccountId): bool
+    {
+        $teacher = Teacher::query()
+            ->where('user_account_id', $userAccountId)
+            ->with('courses')
+            ->first();
+
+        if (! $teacher) {
+            $request->session()->forget(['teacher', 'teacher_id']);
+
+            return false;
+        }
+
+        $request->session()->put([
+            'teacher_id' => $teacher->id,
+            'teacher' => $teacher,
         ]);
 
         return true;

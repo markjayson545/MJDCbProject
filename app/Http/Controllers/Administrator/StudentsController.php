@@ -23,12 +23,18 @@ class StudentsController extends Controller
     {
         $students = Student::with(['degree', 'courses', 'userProfile'])->paginate(10);
         $userAccounts = UserAccount::all();
-        $students->getCollection()->transform(function ($s) {
-            return $s->toArray();
-        });
+
         Log::info('Fetched students list.', ['count' => $students->total()]);
 
         return view('admin.students.students')->with('students', $students)->with('userAccounts', $userAccounts);
+    }
+
+    public function getStudents(): View
+    {
+        $students = Student::with(['degree', 'courses', 'userProfile'])->paginate(10);
+        $userAccounts = UserAccount::all();
+
+        return view('studentslist')->with('students', $students)->with('userAccounts', $userAccounts);
     }
 
     /**

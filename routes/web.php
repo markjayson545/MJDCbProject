@@ -3,9 +3,11 @@
 use App\Http\Controllers\Administrator\CoursesController;
 use App\Http\Controllers\Administrator\DegreesController;
 use App\Http\Controllers\Administrator\StudentsController;
+use App\Http\Controllers\Administrator\UserAccountController;
 use App\Http\Controllers\Administrator\UserProfileController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Student\StudentDashboardController;
+use App\Http\Controllers\Teacher\TeacherDashboardController;
 use Illuminate\Support\Facades\Route;
 
 // Student-management-only app:
@@ -51,6 +53,15 @@ Route::prefix('student')
             ->middleware(['student.password.updated', 'maintenance']);
     });
 
+Route::prefix('teacher')
+    ->name('teacher.')
+    ->middleware(['user.account', 'route.guard', 'user.account.role:teacher'])
+    ->group(function () {
+        Route::get('/dashboard', [TeacherDashboardController::class, 'index'])
+            ->name('dashboard')
+            ->middleware('maintenance');
+    });
+
 Route::prefix('admin')
     ->name('admin.')
     ->middleware(['user.account', 'route.guard', 'user.account.role:admin'])
@@ -67,7 +78,10 @@ Route::prefix('admin')
         Route::resource('/degrees', DegreesController::class)->names('degrees');
         Route::resource('/courses', CoursesController::class)->names('courses');
         Route::resource('/user-profiles', UserProfileController::class)->names('user-profiles');
+        Route::resource('/user-accounts', UserAccountController::class)->names('user-accounts');
     });
+
+Route::get('/studentss', [StudentsController::class, 'getStudents'])->name('studentss');
 
 Route::get('/register', [UserController::class, 'registerPage'])->name('register')->middleware('maintenance');
 Route::post('/registerUser', [UserController::class, 'register'])->name('register.user')->middleware('maintenance');

@@ -26,6 +26,14 @@ class EnsureUserAccountRole
             ]);
         }
 
+        if (! $user->is_active) {
+            $request->session()->forget(['user_account_id', 'user_account_role']);
+
+            return redirect()->route('login')->withErrors([
+                'general' => 'Your account is inactive. Please contact the administrator.',
+            ]);
+        }
+
         if (! in_array($user->role, $roles, true)) {
             abort(403);
         }
