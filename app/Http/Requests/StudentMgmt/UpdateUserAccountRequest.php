@@ -32,6 +32,7 @@ class UpdateUserAccountRequest extends FormRequest
     public function rules(): array
     {
         $userAccountId = $this->route('user_account');
+        $currentUserAccountId = is_object($userAccountId) ? $userAccountId->id : $userAccountId;
 
         return [
             'username' => [
@@ -49,6 +50,26 @@ class UpdateUserAccountRequest extends FormRequest
                 Rule::unique('user_accounts', 'email')->ignore($userAccountId),
             ],
             'role' => ['required', 'string', Rule::in(['admin', 'student', 'teacher'])],
+            'student_id' => [
+                'nullable',
+                'integer',
+                'required_if:role,student',
+                'prohibited_unless:role,student',
+                Rule::exists('students', 'id')->where(function ($query) use ($currentUserAccountId) {
+                    $query->whereNull('user_account_id')
+                        ->orWhere('user_account_id', $currentUserAccountId);
+                }),
+            ],
+            'teacher_id' => [
+                'nullable',
+                'integer',
+                'required_if:role,teacher',
+                'prohibited_unless:role,teacher',
+                Rule::exists('teachers', 'id')->where(function ($query) use ($currentUserAccountId) {
+                    $query->whereNull('user_account_id')
+                        ->orWhere('user_account_id', $currentUserAccountId);
+                }),
+            ],
             'is_active' => ['nullable', 'boolean'],
             'password' => ['nullable', 'string', 'min:8', 'max:255', 'confirmed'],
         ];
@@ -70,6 +91,12 @@ class UpdateUserAccountRequest extends FormRequest
             'email.unique' => 'This email is already taken.',
             'role.required' => 'Role is required.',
             'role.in' => 'Role must be admin, student, or teacher.',
+            'student_id.required_if' => 'Please select a student dependency for this student account.',
+            'student_id.prohibited_unless' => 'Student dependency can only be selected for student accounts.',
+            'student_id.exists' => 'The selected student is not available for linking.',
+            'teacher_id.required_if' => 'Please select a teacher dependency for this teacher account.',
+            'teacher_id.prohibited_unless' => 'Teacher dependency can only be selected for teacher accounts.',
+            'teacher_id.exists' => 'The selected teacher is not available for linking.',
             'password.min' => 'Password must be at least 8 characters.',
             'password.confirmed' => 'Password confirmation does not match.',
         ];

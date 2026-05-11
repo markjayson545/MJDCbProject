@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\UserAccount;
 use App\Models\UserProfile;
 use Hash;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -232,18 +233,35 @@ class StudentsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): RedirectResponse
+    public function destroy(Request $request, string $id): RedirectResponse|JsonResponse
     {
         $student = Student::query()->find($id);
 
         if (! $student) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Student not found.'], 404);
+            }
+
             return redirect()->route('admin.students.index')->with('error', 'Student not found.');
         }
 
         try {
             $student->courses()->detach();
             $student->delete();
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Student deleted successfully.']);
+            }
         } catch (\Throwable $throwable) {
+            Log::error('Failed to delete student.', ['student_id' => $id, 'error' => $throwable->getMessage()]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Failed to delete student.',
+                    'error' => $throwable->getMessage(),
+                ], 500);
+            }
+
             return redirect()->route('admin.students.index')->with('error', 'Failed to delete student: '.$throwable->getMessage());
         }
 

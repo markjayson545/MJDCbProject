@@ -1,11 +1,16 @@
 {{-- $userAccount is optional; $isEditing toggles password requirements --}}
 @php
     $isEditing = $isEditing ?? false;
+    $selectedRole = old('role', $userAccount['role'] ?? '');
+    $selectedStudentId = old('student_id', $userAccount['student']['id'] ?? '');
+    $selectedTeacherId = old('teacher_id', $userAccount['teacher']['id'] ?? '');
     $roleOptions = $roles ?? [
         'admin' => 'Admin',
         'student' => 'Student',
         'teacher' => 'Teacher',
     ];
+    $students = $students ?? [];
+    $teachers = $teachers ?? [];
 @endphp
 
 <div class="ff-group">
@@ -14,6 +19,38 @@
            value="{{ old('username', $userAccount['username'] ?? '') }}"
            required placeholder="e.g. markjayson545">
     @error('username')
+        <span class="ff-hint" style="color:#ef4444;">{{ $message }}</span>
+    @enderror
+</div>
+
+<div class="ff-group">
+    <label for="student_id">Student Dependency</label>
+    <select name="student_id" id="student_id" {{ $selectedRole === 'student' ? 'required' : '' }}>
+        <option value="">— Select student —</option>
+        @foreach($students as $student)
+            <option value="{{ $student['id'] }}" {{ (string) $selectedStudentId === (string) $student['id'] ? 'selected' : '' }}>
+                {{ $student['lname'] }}, {{ $student['fname'] }}{{ ! empty($student['email']) ? ' ('.$student['email'].')' : '' }}
+            </option>
+        @endforeach
+    </select>
+    <span class="ff-hint">Required when role is Student.</span>
+    @error('student_id')
+        <span class="ff-hint" style="color:#ef4444;">{{ $message }}</span>
+    @enderror
+</div>
+
+<div class="ff-group">
+    <label for="teacher_id">Teacher Dependency</label>
+    <select name="teacher_id" id="teacher_id" {{ $selectedRole === 'teacher' ? 'required' : '' }}>
+        <option value="">— Select teacher —</option>
+        @foreach($teachers as $teacher)
+            <option value="{{ $teacher['id'] }}" {{ (string) $selectedTeacherId === (string) $teacher['id'] ? 'selected' : '' }}>
+                {{ $teacher['lname'] }}, {{ $teacher['fname'] }}{{ ! empty($teacher['email']) ? ' ('.$teacher['email'].')' : '' }}
+            </option>
+        @endforeach
+    </select>
+    <span class="ff-hint">Required when role is Teacher.</span>
+    @error('teacher_id')
         <span class="ff-hint" style="color:#ef4444;">{{ $message }}</span>
     @enderror
 </div>

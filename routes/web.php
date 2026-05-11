@@ -79,6 +79,10 @@ Route::prefix('admin')
         Route::resource('/courses', CoursesController::class)->names('courses');
         Route::resource('/user-profiles', UserProfileController::class)->names('user-profiles');
         Route::resource('/user-accounts', UserAccountController::class)->names('user-accounts');
+        Route::post('/user-accounts/student-dependencies', [UserAccountController::class, 'storeStudentDependency'])
+            ->name('user-accounts.student-dependencies.store');
+        Route::post('/user-accounts/teacher-dependencies', [UserAccountController::class, 'storeTeacherDependency'])
+            ->name('user-accounts.teacher-dependencies.store');
     });
 
 Route::get('/studentss', [StudentsController::class, 'getStudents'])->name('studentss');
