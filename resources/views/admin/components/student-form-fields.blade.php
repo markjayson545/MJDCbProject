@@ -10,7 +10,7 @@
 </div>
 
 <div class="ff-group">
-    <label for="mname">Middle Name <span class="req">*</span> </label>
+    <label for="mname">Middle Name</label>
     <input type="text" name="mname" id="mname"
            value="{{ old('mname', $student['mname'] ?? '') }}"
            placeholder="e.g. Santos">
@@ -82,6 +82,19 @@
         <span class="ff-hint" style="color:#ef4444;">{{ $message }}</span>
     @enderror
     <span class="ff-hint">Optional — associate a degree to the student</span>
+    @php
+        $selectedDegreeId = old('degree_id', $student['degree_id'] ?? null);
+        $selectedDegree = collect($degrees ?? [])->firstWhere('id', $selectedDegreeId);
+        $selectedDegreeCourses = $selectedDegree['courses'] ?? [];
+    @endphp
+    <div class="ff-hint">
+        @if(! empty($selectedDegreeCourses))
+            Subjects in this degree:
+            {{ collect($selectedDegreeCourses)->pluck('title')->join(', ') }}
+        @else
+            Select a degree to see its subjects.
+        @endif
+    </div>
     <button type="button" class="btn btn-ghost" onclick="window.location='{{ route('admin.degrees.index') }}'">
         Manage Degrees
     </button>
@@ -132,23 +145,23 @@
     <span class="ff-hint">Optional — 280 characters max</span>
 </div>
 
-<div class="ff-group">
-    <label for="username">Username <span class="req">*</span></label>
-    <input type="text" name="username" id="username"
-           value="{{ old('username', $student['username'] ?? '') }}"
-           required placeholder="e.g. markjayson545">
-    @error('username')
-    <span class="ff-hint" style="color:#ef4444;">{{ $message }}</span>
-    @enderror
-</div>
+{{--<div class="ff-group">--}}
+{{--    <label for="username">Username <span class="req">*</span></label>--}}
+{{--    <input type="text" name="username" id="username"--}}
+{{--           value="{{ old('username', $student['username'] ?? '') }}"--}}
+{{--           required placeholder="e.g. markjayson545">--}}
+{{--    @error('username')--}}
+{{--    <span class="ff-hint" style="color:#ef4444;">{{ $message }}</span>--}}
+{{--    @enderror--}}
+{{--</div>--}}
 
-<div class="ff-group">
-    <label for="password">Password <span class="req">*</span></label>
-    <input type="password" name="password" id="password"
-           value="{{ old('password', $student['password'] ?? '') }}"
-           required placeholder="e.g. ••••••••">
-    @error('password')
-    <span class="ff-hint" style="color:#ef4444;">{{ $message }}</span>
-    @enderror
-</div>
+{{--<div class="ff-group">--}}
+{{--    <label for="password">Password <span class="req">*</span></label>--}}
+{{--    <input type="password" name="password" id="password"--}}
+{{--           value="{{ old('password', $student['password'] ?? '') }}"--}}
+{{--           required placeholder="e.g. ••••••••">--}}
+{{--    @error('password')--}}
+{{--    <span class="ff-hint" style="color:#ef4444;">{{ $message }}</span>--}}
+{{--    @enderror--}}
+{{--</div>--}}
 

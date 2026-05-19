@@ -40,6 +40,16 @@
         <span class="detail-val">{{ $degree['name'] }}</span>
     </div>
     <div class="detail-row">
+        <span class="detail-key">Subjects</span>
+        <span class="detail-val">
+            @if(! empty($degree['courses']))
+                {{ collect($degree['courses'])->pluck('title')->join(', ') }}
+            @else
+                —
+            @endif
+        </span>
+    </div>
+    <div class="detail-row">
         <span class="detail-key">Created At</span>
         <span class="detail-val">{{ $degree['created_at'] }}</span>
     </div>

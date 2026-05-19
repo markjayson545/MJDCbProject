@@ -7,13 +7,16 @@
 
 @section('content')
     {{-- Student header --}}
+
     @php
-        $initials = strtoupper(show.blade.phpsubstr($student['fname'] ?? 'S', 0, 1) . substr($student['lname'] ?? '', 0, 1));
+        $initials = strtoupper(substr($student['fname'], 0, 1) . ($student['mname'] ? substr($student['mname'], 0, 1) : '') . substr($student['lname'], 0, 1));
     @endphp
 
     <div class="student-header p-6 mb-6">
         <div class="student-header-banner">
-            <div class="student-avatar">{{ $initials }}</div>
+            <div class="student-avatar">
+                {{ $initials }}
+            </div>
             <div class="student-header-info">
                 <h2>{{ $student['fname'] }} {{ $student['mname'] ? $student['mname'].' ' : '' }}{{ $student['lname'] }}</h2>
                 <p>Student Record — ID #{{ $student['id'] }}</p>
@@ -64,30 +67,15 @@
             <span class="detail-val">{{ $student['user_profile']['username'] ?? '—' }}</span>
         </div>
         <div class="detail-row">
-            <span class="detail-key">Subjects (Pivot)</span>
+            <span class="detail-key">Degree Subjects</span>
             <span class="detail-val">
-            @if(! empty($student['courses']))
-                    <div class="mjdc-table-wrap">
-                    <table class="mjdc-table">
-                        <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Assigned At</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($student['courses'] as $course)
-                            <tr>
-                                <td>{{ $course['title'] }}</td>
-                                <td>{{ $course['pivot']['created_at'] ?? '—' }}</td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @else
-                    —
-                @endif
+            @if(! empty($student['degree']['courses']))
+                @foreach($student['degree']['courses'] as $course)
+                    <div>{{ $course['title'] }}</div>
+                @endforeach
+            @else
+                —
+            @endif
         </span>
         </div>
         <div class="detail-row">

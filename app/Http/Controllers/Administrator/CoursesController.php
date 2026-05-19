@@ -20,7 +20,7 @@ class CoursesController extends Controller
         $courses = Course::query()->withCount('students')->paginate(10);
         Log::info('Fetched courses list.', ['count' => $courses->total()]);
 
-        return view('student_mgmt.course.courses')->with('courses', $courses);
+        return view('admin.course.courses')->with('courses', $courses);
     }
 
     /**
@@ -28,7 +28,7 @@ class CoursesController extends Controller
      */
     public function create(): View
     {
-        return view('student_mgmt.course.add');
+        return view('admin.course.add');
     }
 
     /**
@@ -68,7 +68,7 @@ class CoursesController extends Controller
             return redirect()->route('admin.courses.index')->with('error', 'Subject not found.');
         }
 
-        return view('student_mgmt.course.show')->with('course', $course->toArray());
+        return view('admin.course.show')->with('course', $course->toArray());
     }
 
     /**
@@ -97,7 +97,7 @@ class CoursesController extends Controller
             ->get(['id', 'fname', 'lname', 'email'])
             ->toArray();
 
-        return view('student_mgmt.course.edit')
+        return view('admin.course.edit')
             ->with('course', $course->toArray())
             ->with('students', $students);
     }

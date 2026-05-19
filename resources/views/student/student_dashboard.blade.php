@@ -40,7 +40,7 @@
 
         <div class="info-card blue">
             <p class="info-card-title">Degree Program</p>
-            <p class="info-card-value">{{ $student->degree->title ?? 'N/A' }}</p>
+            <p class="info-card-value">{{ $student->degree?->name ?? 'N/A' }}</p>
             <p class="info-card-description">Current academic track.</p>
         </div>
 
@@ -79,6 +79,33 @@
             @endif
         </div>
     </div>
+
+    @if($student->degree && $student->degree->courses->count() > 0)
+        <div class="data-table-wrapper">
+            <h3 class="table-title">Degree Subjects</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Subject ID</th>
+                        <th>Subject Title</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($student->degree->courses as $course)
+                        <tr>
+                            <td><strong>#{{ $course->id }}</strong></td>
+                            <td>{{ $course->title }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @else
+        <div class="empty-state">
+            <p class="empty-state-title">No Degree Subjects</p>
+            <p class="empty-state-description">Your degree program does not have subjects assigned yet.</p>
+        </div>
+    @endif
 
     <!-- Enrolled Courses Section -->
     @if($student->courses->count() > 0)

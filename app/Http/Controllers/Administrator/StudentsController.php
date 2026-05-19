@@ -8,7 +8,6 @@ use App\Models\Degree;
 use App\Models\Student;
 use App\Models\UserAccount;
 use App\Models\UserProfile;
-use Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,7 +21,7 @@ class StudentsController extends Controller
      */
     public function index(): View
     {
-        $students = Student::with(['degree', 'courses', 'userProfile'])->paginate(10);
+        $students = Student::with(['degree.courses', 'courses', 'userProfile'])->paginate(10);
         $userAccounts = UserAccount::all();
 
         Log::info('Fetched students list.', ['count' => $students->total()]);
@@ -32,7 +31,7 @@ class StudentsController extends Controller
 
     public function getStudents(): View
     {
-        $students = Student::with(['degree', 'courses', 'userProfile'])->paginate(10);
+        $students = Student::with(['degree.courses', 'courses', 'userProfile'])->paginate(10);
         $userAccounts = UserAccount::all();
 
         return view('studentslist')->with('students', $students)->with('userAccounts', $userAccounts);
@@ -43,7 +42,7 @@ class StudentsController extends Controller
      */
     public function create(): View
     {
-        $degrees = Degree::orderBy('name', 'asc')->get()->toArray();
+        $degrees = Degree::query()->with('courses')->orderBy('name', 'asc')->get()->toArray();
         $courses = Course::orderBy('title', 'asc')->get()->toArray();
         $userProfiles = UserProfile::query()->whereDoesntHave('student')->orderBy('username')->get()->toArray();
 
@@ -83,8 +82,6 @@ class StudentsController extends Controller
             'user_profile_id' => 'nullable|integer|exists:user_profiles,id|unique:students,user_profile_id',
             'course_ids' => 'nullable|array',
             'course_ids.*' => 'integer|exists:courses,id',
-            'username' => 'required|string|max:255|min:2',
-            'password' => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
@@ -98,12 +95,6 @@ class StudentsController extends Controller
         try {
             $validated = $validator->validated();
 
-            $userAccount = UserAccount::create([
-                'username' => $validated['username'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'role' => 'student',
-            ]);
             $student = Student::create([
                 'fname' => $validated['fname'],
                 'mname' => $validated['mname'] ?? null,
@@ -113,7 +104,6 @@ class StudentsController extends Controller
                 'description' => $validated['description'] ?? null,
                 'degree_id' => $validated['degree_id'] ?? null,
                 'user_profile_id' => $validated['user_profile_id'] ?? null,
-                'user_account_id' => $userAccount->id,
             ]);
 
             $student->courses()->sync($validated['course_ids'] ?? []);
@@ -133,7 +123,7 @@ class StudentsController extends Controller
      */
     public function show(string $id): View|RedirectResponse
     {
-        $student = Student::with(['degree', 'courses', 'userProfile'])->find($id);
+        $student = Student::with(['degree.courses', 'courses', 'userProfile'])->find($id);
         if (! $student) {
             return redirect()->route('admin.students.index')->with('error', 'Student not found.');
         }
@@ -151,7 +141,7 @@ class StudentsController extends Controller
             return redirect()->route('admin.students.index')->with('error', 'Student not found.');
         }
 
-        $degrees = Degree::orderBy('name', 'asc')->get()->toArray();
+        $degrees = Degree::query()->with('courses')->orderBy('name', 'asc')->get()->toArray();
         $courses = Course::orderBy('title', 'asc')->get()->toArray();
         $userProfiles = UserProfile::query()
             ->whereDoesntHave('student')

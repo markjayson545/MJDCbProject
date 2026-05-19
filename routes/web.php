@@ -37,7 +37,7 @@ Route::get('/maintenance', function () {
 
 Route::get('/', [UserController::class, 'login'])->name('login')->middleware('maintenance');
 Route::post('/login', [UserController::class, 'authenticate'])->name('login.authenticate');
-Route::get('/logout', [UserController::class, 'logoutUser'])->name('logout');
+Route::post('/logout', [UserController::class, 'logoutUser'])->name('logout');
 
 Route::prefix('student')
     ->name('student.')

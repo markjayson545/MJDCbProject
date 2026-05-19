@@ -45,14 +45,9 @@
                     <td>{{ $student['contactno'] }}</td>
                     <td>{{ $student['degree']['name'] ?? '—' }}</td>
                     <td>
-                        @if(! empty($student['courses']))
-                            @foreach($student['courses'] as $course)
-                                <div>
-                                    {{ $course['title'] }}
-                                    @if(! empty($course['pivot']['created_at']))
-                                        <small>({{ $course['pivot']['created_at'] }})</small>
-                                    @endif
-                                </div>
+                        @if(! empty($student['degree']['courses']))
+                            @foreach($student['degree']['courses'] as $course)
+                                <div>{{ $course['title'] }}</div>
                             @endforeach
                         @else
                             —
@@ -100,7 +95,7 @@
 
     {{-- Pagination: uses our custom view -- no Laravel default markup leaks through --}}
     @if(isset($students) && method_exists($students, 'links') && $students->hasPages())
-        {{ $students->links('student_mgmt.components.pagination') }}
+        {{ $students->links('admin.components.pagination') }}
     @endif
 
 @endsection

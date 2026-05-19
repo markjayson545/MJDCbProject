@@ -19,12 +19,51 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 1000);
     }
 
+    const logoutForm = $('#logout-form');
+    const logoutButton = $('#logout-button');
+    const logoutModal = $('#logout-modal');
+    const logoutConfirm = $('#logout-confirm');
+    const logoutCloseButtons = $('.js-close-logout-modal');
+    let logoutConfirmed = false;
+
+    function openLogoutModal() {
+        logoutModal.fadeIn(120);
+        $('body').css('overflow', 'hidden');
+    }
+
+    function closeLogoutModal() {
+        logoutModal.fadeOut(120);
+        $('body').css('overflow', '');
+        logoutConfirmed = false;
+    }
+
+    if (logoutForm.length) {
+        logoutForm.on('submit', function (event) {
+            if (!logoutConfirmed) {
+                event.preventDefault();
+                openLogoutModal();
+            }
+        });
+    }
+
+    logoutButton.on('click', function () {
+        openLogoutModal();
+    });
+
+    logoutConfirm.on('click', function () {
+        logoutConfirmed = true;
+        logoutForm.trigger('submit');
+    });
+
+    logoutCloseButtons.on('click', function () {
+        closeLogoutModal();
+    });
+
     initUserAccountAjaxCrud();
     initStudentAjaxCrud();
 });
 
 Alpine.start();
-
 function initUserAccountAjaxCrud() {
     const root = document.getElementById('user-account-ajax-root');
     const configElement = document.getElementById('user-account-ajax-config');
@@ -66,13 +105,13 @@ function initUserAccountAjaxCrud() {
     const $role = $('#modal_role');
     const $studentId = $('#modal_student_id');
     const $teacherId = $('#modal_teacher_id');
-    const $accountForm = $('#user-account-ajax-form');
     const $accountErrors = $('#account-form-errors');
-    const $dependencyForm = $('#dependency-ajax-form');
     const $dependencyErrors = $('#dependency-form-errors');
     const $dependencyType = $('#dependency-form-type');
     const $dependencyDepartmentGroup = $('#dependency_department_group');
     const csrfToken = $('meta[name="csrf-token"]').attr('content');
+    let accountActionUrl = endpoints.store;
+    let dependencyActionUrl = endpoints.storeStudentDependency;
 
     function showFeedback(message, isError = false) {
         $feedback.text(message).css('color', isError ? '#dc2626' : '#16a34a').show();
@@ -199,13 +238,48 @@ function initUserAccountAjaxCrud() {
         });
     }
 
+    function resetAccountFields() {
+        $accountModal.find('input[type="text"], input[type="email"], input[type="password"]').val('');
+    }
+
+    function resetDependencyFields() {
+        $dependencyModal.find('input[type="text"], input[type="email"], textarea').val('');
+    }
+
+    function buildAccountPayload() {
+        const selectedRole = $role.val();
+
+        if (selectedRole !== 'student') {
+            $studentId.prop('disabled', true);
+        }
+
+        if (selectedRole !== 'teacher') {
+            $teacherId.prop('disabled', true);
+        }
+
+        let formData = $accountModal.find('input[name], select[name], textarea[name]').serialize();
+
+        $studentId.prop('disabled', false);
+        $teacherId.prop('disabled', false);
+
+        if (formData.indexOf('is_active') === -1) {
+            formData += `${formData ? '&' : ''}is_active=0`;
+        }
+
+        return formData;
+    }
+
+    function buildDependencyPayload() {
+        return $dependencyModal.find('input[name], select[name], textarea[name]').serialize();
+    }
+
     function resetFormForCreate() {
         $('#account-modal-title').text('Create User Account');
         $('#account-submit-button').text('Create Account');
-        $accountForm.attr('action', endpoints.store);
+        accountActionUrl = endpoints.store;
         $('#account-form-method').val('POST');
         $('#account-form-user-id').val('');
-        $accountForm[0].reset();
+        resetAccountFields();
         $('#modal_is_active').prop('checked', true);
         $('#modal_password, #modal_password_confirmation').prop('required', true);
         $('#password-required-marker, #password-confirm-required-marker').show();
@@ -218,10 +292,14 @@ function initUserAccountAjaxCrud() {
     }
 
     function openCreateModal() {
-        hideFeedback();
-        resetFormForCreate();
-        $accountModal.fadeIn(140);
-        $('body').css('overflow', 'hidden');
+        try {
+            hideFeedback();
+            resetFormForCreate();
+            $accountModal.fadeIn(140);
+            $('body').css('overflow', 'hidden');
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     function openEditModal(userId) {
@@ -242,7 +320,7 @@ function initUserAccountAjaxCrud() {
 
                 $('#account-modal-title').text(`Edit User Account #${account.id}`);
                 $('#account-submit-button').text('Save Changes');
-                $accountForm.attr('action', endpoints.update.replace(':id', account.id));
+                accountActionUrl = endpoints.update.replace(':id', account.id);
                 $('#account-form-method').val('PUT');
                 $('#account-form-user-id').val(account.id);
                 $('#modal_username').val(account.username);
@@ -273,7 +351,7 @@ function initUserAccountAjaxCrud() {
     function openDeleteModal(userId, username, hasDependency = false, depType = '', depName = '') {
         deleteUserId = userId;
         $('#delete-account-name').text(username || `ID ${userId}`);
-        
+
         if (hasDependency === 'true' || hasDependency === true) {
             $('#dependency-type-display').text(depType);
             $('#dependency-name-display').text(depName);
@@ -281,7 +359,7 @@ function initUserAccountAjaxCrud() {
         } else {
             $('#delete-dependency-warning').hide();
         }
-        
+
         $deleteModal.fadeIn(120);
         $('body').css('overflow', 'hidden');
     }
@@ -336,11 +414,11 @@ function initUserAccountAjaxCrud() {
 
     function openDependencyModal(type) {
         $dependencyErrors.hide().html('');
-        $dependencyForm[0].reset();
+        resetDependencyFields();
         $dependencyType.val(type);
         $('#dependency-modal-title').text(type === 'teacher' ? 'Create Teacher Dependency' : 'Create Student Dependency');
         $('#dependency-submit-button').text(type === 'teacher' ? 'Create Teacher' : 'Create Student');
-        $dependencyForm.attr('action', type === 'teacher' ? endpoints.storeTeacherDependency : endpoints.storeStudentDependency);
+        dependencyActionUrl = type === 'teacher' ? endpoints.storeTeacherDependency : endpoints.storeStudentDependency;
         $dependencyDepartmentGroup.toggle(type === 'teacher');
         $dependencyModal.fadeIn(120);
     }
@@ -358,7 +436,7 @@ function initUserAccountAjaxCrud() {
     });
     $(document).on('click', '.js-open-delete-modal', function () {
         openDeleteModal(
-            $(this).data('user-id'), 
+            $(this).data('user-id'),
             $(this).data('username'),
             $(this).data('has-dependency'),
             $(this).data('dependency-type'),
@@ -376,35 +454,18 @@ function initUserAccountAjaxCrud() {
 
     $role.on('change', updateRoleUX);
 
-    $accountForm.on('submit', function (event) {
+    $('#account-submit-button').on('click', function (event) {
         event.preventDefault();
         $accountErrors.hide().html('');
 
-        const selectedRole = $role.val();
-
-        if (selectedRole !== 'student') {
-            $studentId.prop('disabled', true);
-        }
-
-        if (selectedRole !== 'teacher') {
-            $teacherId.prop('disabled', true);
-        }
-
-        let formData = $(this).serialize();
-
-        $studentId.prop('disabled', false);
-        $teacherId.prop('disabled', false);
-
-        if (formData.indexOf('is_active') === -1) {
-            formData += '&is_active=0';
-        }
+        const formData = buildAccountPayload();
 
         const $submitButton = $('#account-submit-button');
         const originalText = $submitButton.text();
         $submitButton.prop('disabled', true).text('Saving...');
 
         $.ajax({
-            url: $(this).attr('action'),
+            url: accountActionUrl,
             type: 'POST',
             data: formData,
             headers: {
@@ -475,7 +536,7 @@ function initUserAccountAjaxCrud() {
         });
     });
 
-    $dependencyForm.on('submit', function (event) {
+    $('#dependency-submit-button').on('click', function (event) {
         event.preventDefault();
         $dependencyErrors.hide().html('');
 
@@ -484,9 +545,9 @@ function initUserAccountAjaxCrud() {
         $depSubmitButton.prop('disabled', true).text('Saving...');
 
         $.ajax({
-            url: $(this).attr('action'),
+            url: dependencyActionUrl,
             type: 'POST',
-            data: $(this).serialize(),
+            data: buildDependencyPayload(),
             headers: {
                 Accept: 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
@@ -583,14 +644,14 @@ function initStudentAjaxCrud() {
             success: function (response) {
                 $deleteModal.fadeOut(120);
                 $('body').css('overflow', '');
-                
+
                 // Show temporary success feedback if possible, or just reload
                 if (window.showGlobalFeedback) {
                     window.showGlobalFeedback(response.message || 'Student deleted successfully.');
                 } else {
                     alert(response.message || 'Student deleted successfully.');
                 }
-                
+
                 window.location.reload(); // Simplest way for students list right now
             },
             error: function (xhr) {

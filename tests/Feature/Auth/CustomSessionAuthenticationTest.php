@@ -22,6 +22,29 @@ it('redirects admin accounts to the admin dashboard', function () {
     $this->assertSame('admin', session('user_account_role'));
 });
 
+it('logs out user accounts', function () {
+    $account = UserAccount::query()->create([
+        'username' => 'logout_user',
+        'email' => 'logout@example.com',
+        'role' => 'admin',
+        'password' => Hash::make('secret-pass'),
+    ]);
+
+    $this->withSession([
+        'user_account_id' => $account->id,
+        'user_account_role' => $account->role,
+        'user_account_name' => $account->username,
+        'user_account_email' => $account->email,
+        'user_account_is_active' => $account->is_active,
+    ]);
+
+    $response = $this->post(route('logout'));
+
+    $response->assertRedirect(route('login', absolute: false));
+    expect(session('user_account_id'))->toBeNull();
+    expect(session('user_account_role'))->toBeNull();
+});
+
 it('requires a first-time student to update their password', function () {
     $studentAccount = UserAccount::query()->create([
         'username' => 'student_user',

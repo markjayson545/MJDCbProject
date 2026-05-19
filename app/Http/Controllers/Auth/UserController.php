@@ -86,7 +86,7 @@ class UserController extends Controller
         }
     }
 
-    public function logoutUser()
+    public function logoutUser(): RedirectResponse
     {
         // Clear the user account session data
         $this->removeUserAccountSession();

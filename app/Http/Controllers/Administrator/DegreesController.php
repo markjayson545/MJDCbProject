@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Administrator;
 
 use App\Http\Controllers\Archived\Controller;
+use App\Http\Requests\StudentMgmt\StoreDegreeRequest;
+use App\Http\Requests\StudentMgmt\UpdateDegreeRequest;
+use App\Models\Course;
 use App\Models\Degree;
-use Illuminate\Http\Request;
 
 class DegreesController extends Controller
 {
@@ -23,22 +25,24 @@ class DegreesController extends Controller
      */
     public function create()
     {
-        return view('admin.degree.add');
+        $courses = Course::query()->orderBy('title')->get()->toArray();
+
+        return view('admin.degree.add')->with('courses', $courses);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreDegreeRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:degrees,name',
-        ]);
+        $validated = $request->validated();
 
         try {
-            Degree::create([
-                'name' => $request->input('name'),
+            $degree = Degree::query()->create([
+                'name' => $validated['name'],
             ]);
+
+            $degree->courses()->sync($validated['course_ids'] ?? []);
         } catch (\Exception $e) {
             return redirect()->route('admin.degrees.create')->with('error', 'Failed to create degree: '.$e->getMessage());
         }
@@ -51,7 +55,7 @@ class DegreesController extends Controller
      */
     public function show(string $id)
     {
-        $degree = Degree::find($id);
+        $degree = Degree::query()->with('courses')->find($id);
         if (! $degree) {
             return redirect()->route('admin.degrees.index')->with('error', 'Degree not found.');
         }
@@ -64,32 +68,36 @@ class DegreesController extends Controller
      */
     public function edit(string $id)
     {
-        $degree = Degree::find($id);
+        $degree = Degree::query()->with('courses')->find($id);
         if (! $degree) {
             return redirect()->route('admin.degrees.index')->with('error', 'Degree not found.');
         }
 
-        return view('admin.degree.edit')->with('degree', $degree->toArray());
+        $courses = Course::query()->orderBy('title')->get()->toArray();
+
+        return view('admin.degree.edit')
+            ->with('degree', $degree->toArray())
+            ->with('courses', $courses);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateDegreeRequest $request, string $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:degrees,name,'.$id,
-        ]);
-
-        $degree = Degree::find($id);
+        $degree = Degree::query()->find($id);
         if (! $degree) {
             return redirect()->route('admin.degrees.index')->with('error', 'Degree not found.');
         }
 
+        $validated = $request->validated();
+
         try {
             $degree->update([
-                'name' => $request->input('name'),
+                'name' => $validated['name'],
             ]);
+
+            $degree->courses()->sync($validated['course_ids'] ?? []);
         } catch (\Throwable $th) {
             return redirect()->route('admin.degrees.edit', $id)->with('error', 'Failed to update degree: '.$th->getMessage());
         }

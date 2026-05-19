@@ -14,7 +14,7 @@ class StudentDashboardController extends Controller
         $studentId = $request->session()->get('student_id');
 
         $student = Student::query()
-            ->with(['courses', 'degree'])
+            ->with(['courses', 'degree.courses'])
             ->findOrFail($studentId);
 
         $request->session()->put('student', $student);

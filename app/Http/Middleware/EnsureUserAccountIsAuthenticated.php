@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Session;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserAccountIsAuthenticated
@@ -16,6 +17,8 @@ class EnsureUserAccountIsAuthenticated
     public function handle(Request $request, Closure $next): Response
     {
         if (! $request->session()->has('user_account_id')) {
+            Session::flush();
+
             return redirect()->route('login')->withErrors([
                 'general' => 'Please log in to continue.',
             ]);

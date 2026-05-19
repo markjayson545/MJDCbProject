@@ -225,8 +225,8 @@
             <button type="button" class="btn btn-ghost js-close-account-modal">Close</button>
         </div>
 
-        <form id="user-account-ajax-form" method="POST">
-            @csrf
+{{--        <form id="user-account-ajax-form" method="POST">--}}
+{{--            @csrf--}}
             <input type="hidden" id="account-form-method" name="_method" value="POST">
             <input type="hidden" id="account-form-user-id" value="">
 
@@ -287,10 +287,10 @@
             </div>
 
             <div class="form-card-footer">
-                <button type="submit" class="btn btn-primary" id="account-submit-button">Create Account</button>
+                <button class="btn btn-primary" id="account-submit-button">Create Account</button>
                 <button type="button" class="btn btn-ghost js-close-account-modal">Cancel</button>
             </div>
-        </form>
+{{--        </form>--}}
     </div>
 </div>
 
@@ -325,9 +325,6 @@
             <h3 id="dependency-modal-title">Create Dependency</h3>
             <button type="button" class="btn btn-ghost js-close-dependency-modal">Close</button>
         </div>
-
-        <form id="dependency-ajax-form" method="POST">
-            @csrf
             <input type="hidden" id="dependency-form-type" name="dependency_type" value="student">
 
             <div class="form-card-body">
@@ -370,9 +367,8 @@
             </div>
 
             <div class="form-card-footer">
-                <button type="submit" class="btn btn-primary" id="dependency-submit-button">Create Dependency</button>
+                <button class="btn btn-primary" id="dependency-submit-button">Create Dependency</button>
                 <button type="button" class="btn btn-ghost js-close-dependency-modal">Cancel</button>
             </div>
-        </form>
     </div>
 </div>

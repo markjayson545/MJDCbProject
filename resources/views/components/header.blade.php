@@ -22,18 +22,38 @@
             {{ now()->format('Y-m-d H:i') }}
         </div>
 
-{{--        Logout Button--}}
+        {{--        Logout Button--}}
 
-            <form method="GET" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-ghost flex flex-row items-center" style="color: red">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg>
-                    Logout
-                </button>
-            </form>
+        <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: flex; padding: 10px; justify-content: center; align-items: center;">
+            @csrf
+            <button class="btn btn-ghost flex flex-row items-center" id="logout-button" type="button" style="color: red;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                Logout
+            </button>
+        </form>
+
+
 
     </div>
 </header>
+
+<div id="logout-modal" class="ajax-modal" style="display:none;">
+    <div class="ajax-modal-overlay js-close-logout-modal"></div>
+    <div class="ajax-modal-card" style="max-width:420px;">
+        <div class="ajax-modal-header">
+            <h3>Sign out</h3>
+            <button type="button" class="btn btn-ghost js-close-logout-modal">Close</button>
+        </div>
+        <div class="form-card-body">
+            <p>You are about to log out of the system.</p>
+            <p class="ff-hint">You will need to log in again to continue.</p>
+        </div>
+        <div class="form-card-footer">
+            <button type="button" class="btn btn-danger" id="logout-confirm">Logout</button>
+            <button type="button" class="btn btn-ghost js-close-logout-modal">Cancel</button>
+        </div>
+    </div>
+</div>
