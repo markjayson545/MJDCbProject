@@ -238,6 +238,10 @@ function initUserAccountAjaxCrud() {
         });
     }
 
+    setInterval(function () {
+        reloadList();
+    }, 1000);
+
     function resetAccountFields() {
         $accountModal.find('input[type="text"], input[type="email"], input[type="password"]').val('');
     }
