@@ -19,6 +19,7 @@ class UserAccount extends Model
         'password',
         'is_active',
         'password_changed_at',
+        'profile_picture_path',
     ];
 
     protected function casts(): array

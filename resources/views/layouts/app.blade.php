@@ -38,5 +38,6 @@
         @endif
 
         @include('components.footer')
+        @yield('after-scripts')
     </body>
 </html>

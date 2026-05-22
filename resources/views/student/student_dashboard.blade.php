@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @php($student = session('student'))
+@php($profilePicturePath = $student?->userAccount?->profile_picture_path)
 
 @section('title', 'Student Dashboard - System >_')
 
@@ -53,6 +54,50 @@
 
     <!-- Student Information Card -->
     <div class="detail-card">
+        <!-- Profile Picture Section -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="position: relative; display: inline-block;">
+                <!-- Hidden file input -->
+                <input type="file" id="profilePictureInput" accept="image/*" style="display: none;">
+
+                <!-- Profile Picture Display (Clickable) -->
+                <div id="profilePictureContainer"
+                     style="cursor: pointer; position: relative; display: inline-block; transition: transform 0.2s ease, opacity 0.2s ease;"
+                     onmouseover="this.style.opacity='0.8'"
+                     onmouseout="this.style.opacity='1'"
+                     onclick="document.getElementById('profilePictureInput').click()">
+                    @if(!empty($profilePicturePath))
+                        <img id="profileImage"
+                             src="{{ asset('storage/' . $profilePicturePath) }}"
+                             alt="Profile Picture"
+                             class="student-avatar"
+                             style="object-fit: cover; transition: opacity 0.2s ease;">
+                    @else
+                        <div id="profileInitials" class="student-avatar" style="transition: opacity 0.2s ease;">
+                            {{ strtoupper(substr($student->fname, 0, 1) . substr($student->lname, 0, 1)) }}
+                        </div>
+                    @endif
+
+                    <!-- Upload Icon Overlay -->
+                    <div style="position: absolute; bottom: 0; right: 0; background: rgba(34, 197, 94, 0.9); border-radius: 50%; padding: 8px; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; cursor: pointer;">
+                        <svg fill="white" viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Upload Status -->
+                <div id="uploadStatus" style="margin-top: 1rem; display: none;">
+                    <div style="color: #86efac; font-size: 0.9rem;">Uploading...</div>
+                </div>
+            </div>
+
+            <h4 style="margin: 1rem 0 0.5rem; color: var(--clr-text); font-family: 'Fira Code', monospace;">
+                {{ $student->fname }} {{ $student->lname }}
+            </h4>
+            <p style="margin: 0; color: var(--clr-text-muted); font-size: 0.86rem;">Click profile picture to upload</p>
+        </div>
+
         <h3 class="detail-card-title">Personal Information</h3>
         <div class="detail-card-content">
             <div class="info-row">
@@ -140,3 +185,78 @@
     @endif
 
 @endsection
+
+@section('after-scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const profilePictureInput = document.getElementById('profilePictureInput');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const profileImage = document.getElementById('profileImage');
+    const profileInitials = document.getElementById('profileInitials');
+
+    profilePictureInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Show upload status
+        uploadStatus.style.display = 'block';
+        uploadStatus.innerHTML = '<div style="color: #86efac; font-size: 0.9rem;">Uploading...</div>';
+
+        // Create FormData
+        const formData = new FormData();
+        formData.append('profile_picture', file);
+
+        // Upload the file
+        fetch('{{ route("student.upload-profile-picture") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the profile image
+                if (profileImage) {
+                    profileImage.src = data.profile_picture_url + '?t=' + new Date().getTime();
+                } else {
+                    // If no image existed, hide initials and create image
+                    if (profileInitials) profileInitials.style.display = 'none';
+                    const img = document.createElement('img');
+                    img.id = 'profileImage';
+                    img.src = data.profile_picture_url;
+                    img.alt = 'Profile Picture';
+                    img.className = 'student-avatar';
+                    img.style.objectFit = 'cover';
+                    img.style.transition = 'opacity 0.2s ease';
+                    document.getElementById('profilePictureContainer').insertBefore(img, document.getElementById('profilePictureContainer').querySelector('div:last-child'));
+                }
+
+                // Update status
+                uploadStatus.innerHTML = '<div style="color: #86efac; font-size: 0.9rem;">✓ Profile picture updated!</div>';
+                setTimeout(() => {
+                    uploadStatus.style.display = 'none';
+                }, 3000);
+            } else {
+                uploadStatus.innerHTML = '<div style="color: #fda4af; font-size: 0.9rem;">✗ Error: ' + data.message + '</div>';
+                setTimeout(() => {
+                    uploadStatus.style.display = 'none';
+                }, 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            uploadStatus.innerHTML = '<div style="color: #fda4af; font-size: 0.9rem;">✗ Upload failed. Please try again.</div>';
+            setTimeout(() => {
+                uploadStatus.style.display = 'none';
+            }, 3000);
+        });
+
+        // Reset input
+        profilePictureInput.value = '';
+    });
+});
+</script>
+@endsection
+

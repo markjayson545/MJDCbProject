@@ -51,6 +51,8 @@ Route::prefix('student')
         Route::get('/dashboard', [StudentDashboardController::class, 'index'])
             ->name('dashboard')
             ->middleware(['student.password.updated', 'maintenance']);
+        Route::post('/upload-profile-picture', [StudentDashboardController::class, 'uploadProfilePicture'])
+            ->name('upload-profile-picture');
     });
 
 Route::prefix('teacher')
@@ -60,6 +62,8 @@ Route::prefix('teacher')
         Route::get('/dashboard', [TeacherDashboardController::class, 'index'])
             ->name('dashboard')
             ->middleware('maintenance');
+        Route::post('/upload-profile-picture', [TeacherDashboardController::class, 'uploadProfilePicture'])
+            ->name('upload-profile-picture');
     });
 
 Route::prefix('admin')

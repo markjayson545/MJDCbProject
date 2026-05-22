@@ -15,9 +15,6 @@ class DownForMaintenanceMW
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (env('APP_ENV') === 'local') {
-            return redirect()->route('maintenance');
-        }
 
         return $next($request);
     }

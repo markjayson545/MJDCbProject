@@ -188,7 +188,7 @@ class UserController extends Controller
     {
         $student = Student::query()
             ->where('user_account_id', $userAccountId)
-            ->with(['courses', 'degree'])
+            ->with(['courses', 'degree', 'userAccount'])
             ->first();
 
         if (! $student) {
@@ -209,7 +209,7 @@ class UserController extends Controller
     {
         $teacher = Teacher::query()
             ->where('user_account_id', $userAccountId)
-            ->with('courses')
+            ->with(['courses', 'userAccount'])
             ->first();
 
         if (! $teacher) {
@@ -232,7 +232,7 @@ class UserController extends Controller
 
         if ($studentId) {
             $student = Student::query()
-                ->with(['courses', 'degree'])
+                ->with(['courses', 'degree', 'userAccount'])
                 ->find($studentId);
 
             if ($student) {
