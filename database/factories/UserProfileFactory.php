@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserAccount>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserProfile>
  */
-class UserAccountFactory extends Factory
+class UserProfileFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,10 +18,7 @@ class UserAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'username' => $this->faker->unique()->userName(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'role' => 'student',
-            'is_active' => 1,
+            'username' => fake()->unique()->userName(),
             'password' => Hash::driver('bcrypt')->make('password'),
         ];
     }

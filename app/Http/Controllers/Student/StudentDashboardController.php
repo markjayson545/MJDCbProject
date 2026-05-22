@@ -3,15 +3,13 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Archived\Controller;
+use App\Http\Requests\ProfilePictureUploadRequest;
+use App\Libraries\ProfilePictureLibrary;
 use App\Models\Student;
 use App\Models\UserAccount;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
 
 class StudentDashboardController extends Controller
 {
@@ -25,15 +23,11 @@ class StudentDashboardController extends Controller
 
         $request->session()->put('student', $student);
 
-        return view('student.student_dashboard');
+        return view('student.student_dashboard')->with('student', $student);
     }
 
-    public function uploadProfilePicture(Request $request): JsonResponse
+    public function uploadProfilePicture(ProfilePictureUploadRequest $request, ProfilePictureLibrary $profilePictures): JsonResponse
     {
-        $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
         $studentId = $request->session()->get('student_id');
         $userAccountId = $request->session()->get('user_account_id');
 
@@ -53,34 +47,16 @@ class StudentDashboardController extends Controller
         }
 
         try {
-            $image = $request->file('profile_picture');
-            $manager = new ImageManager(new Driver);
-            $imgResized = $manager->decode($image);
-            $imgResized->resize(300, 300);
-
-            $fileName = Str::uuid().'.jpg';
-            $directory = 'user-profiles/'.$userAccountId.'/profile-pictures';
-            Storage::disk('public')->makeDirectory($directory);
-
-            $relativePath = $directory.'/'.$fileName;
-            $absolutePath = Storage::disk('public')->path($relativePath);
-
-            if (! empty($userAccount->profile_picture_path)) {
-                Storage::disk('public')->delete($userAccount->profile_picture_path);
-            }
-
-            $imgResized->save($absolutePath);
-
-            $userAccount->update([
-                'profile_picture_path' => $relativePath,
-            ]);
+            $relativePath = $profilePictures->upload($userAccount, $request->file('profile_picture'));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Profile picture uploaded successfully.',
                 'profile_picture_url' => asset('storage/'.$relativePath),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $throwable) {
+            report($throwable);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to process the image.',

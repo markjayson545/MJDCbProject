@@ -18,6 +18,7 @@
             </svg>
             Add Subject
         </a>
+        @include('admin.components.export-buttons', ['dataset' => 'courses'])
     </div>
 
     <div class="mjdc-table-wrap">

@@ -17,6 +17,7 @@
             </svg>
             Add Degree
         </a>
+        @include('admin.components.export-buttons', ['dataset' => 'degrees'])
     </div>
 
     {{-- Table --}}

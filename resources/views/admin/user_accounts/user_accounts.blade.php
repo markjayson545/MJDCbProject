@@ -28,6 +28,7 @@
             </svg>
             Add User Account
         </button>
+        @include('admin.components.export-buttons', ['dataset' => 'user-accounts'])
     </div>
 
     <div class="mjdc-table-wrap">

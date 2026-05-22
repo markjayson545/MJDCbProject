@@ -18,6 +18,7 @@
             </svg>
             Add User Profile
         </a>
+        @include('admin.components.export-buttons', ['dataset' => 'user-profiles'])
     </div>
 
     <div class="mjdc-table-wrap">

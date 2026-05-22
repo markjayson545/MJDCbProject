@@ -17,6 +17,7 @@
             </svg>
             Add Student
         </a>
+        @include('admin.components.export-buttons', ['dataset' => 'students'])
     </div>
 
     {{-- Table --}}

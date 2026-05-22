@@ -59,6 +59,32 @@
     </div>
 </div>
 
+@php
+    $reports = [
+        'summary' => 'System Summary',
+        'students' => 'Students',
+        'teachers' => 'Teachers',
+        'courses' => 'Subjects',
+        'degrees' => 'Degrees',
+        'user-accounts' => 'User Accounts',
+        'user-profiles' => 'User Profiles',
+    ];
+@endphp
+
+<div class="detail-card" style="margin-bottom: 1.5rem;">
+    <h3 class="detail-card-title">Data Exports</h3>
+    <div class="detail-card-content">
+        @foreach($reports as $dataset => $label)
+            <div class="info-row">
+                <span class="info-key">{{ $label }}</span>
+                <span class="info-val">
+                    @include('admin.components.export-buttons', ['dataset' => $dataset])
+                </span>
+            </div>
+        @endforeach
+    </div>
+</div>
+
 {{-- Recent Activity Table --}}
 <h3 class="section-heading">
     Recent Activity
