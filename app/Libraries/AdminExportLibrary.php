@@ -225,12 +225,12 @@ class AdminExportLibrary
         $degreeSubjectCount = Degree::query()->withCount('courses')->get()->sum('courses_count');
 
         return collect([
-            ['Students', Student::query()->count()],
-            ['Teachers', Teacher::query()->count()],
-            ['Subjects', Course::query()->count()],
-            ['Degrees', Degree::query()->count()],
-            ['User Accounts', UserAccount::query()->count()],
-            ['User Profiles', UserProfile::query()->count()],
+            ['Students', Student::query()->count('*')],
+            ['Teachers', Teacher::query()->count('*')],
+            ['Subjects', Course::query()->count('*')],
+            ['Degrees', Degree::query()->count('*')],
+            ['User Accounts', UserAccount::query()->count('*')],
+            ['User Profiles', UserProfile::query()->count('*')],
             ['Course Enrollments', $courseEnrollmentCount],
             ['Teacher Assignments', $teacherAssignmentCount],
             ['Degree Subject Links', $degreeSubjectCount],
