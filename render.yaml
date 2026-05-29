@@ -4,7 +4,6 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    preDeployCommand: docker-predeploy
     healthCheckPath: /up
     envVars:
       - key: APP_NAME
@@ -41,3 +40,7 @@ services:
         value: file
       - key: QUEUE_CONNECTION
         value: sync
+      - key: RUN_MIGRATIONS
+        value: "true"
+      - key: RUN_SEEDERS
+        value: "true"

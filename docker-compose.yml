@@ -20,6 +20,8 @@ services:
       SESSION_DRIVER: file
       CACHE_STORE: file
       QUEUE_CONNECTION: sync
+      RUN_MIGRATIONS: "false"
+      RUN_SEEDERS: "false"
     depends_on:
       db:
         condition: service_healthy
