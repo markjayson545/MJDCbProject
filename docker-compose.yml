@@ -10,12 +10,26 @@ services:
       - "8000:80"
     env_file:
       - .env
-    # We override DB_HOST to point to the docker-compose database service explicitly
     environment:
-      - DB_HOST=db
+      PORT: 80
+      DB_HOST: db
+      DB_CONNECTION: mysql
+      DB_DATABASE: ${DB_DATABASE:-mjdcbproject}
+      DB_USERNAME: ${DOCKER_DB_USERNAME:-laravel}
+      DB_PASSWORD: ${DOCKER_DB_PASSWORD:-secret}
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      RUN_MIGRATIONS: "false"
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php -r \"exit((int) !@file_get_contents('http://127.0.0.1:80/up'));\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   db:
     image: mysql:8.0
@@ -23,11 +37,9 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-mjdcbproject}
-      MYSQL_USER: ${DB_USERNAME:-laravel}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
-    ports:
-      - "3306:3306" # Optional: allows you to connect a local GUI tool to the db
+      MYSQL_USER: ${DOCKER_DB_USERNAME:-laravel}
+      MYSQL_PASSWORD: ${DOCKER_DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DOCKER_DB_ROOT_PASSWORD:-secret}
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -38,4 +50,3 @@ services:
 
 volumes:
   db_data:
-
