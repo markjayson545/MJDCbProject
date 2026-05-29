@@ -28,7 +28,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql gd zip bcmath pcntl \
-    && a2enmod rewrite \
+    && (a2dismod -f mpm_event mpm_worker || true) \
+    && a2enmod mpm_prefork rewrite \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/html

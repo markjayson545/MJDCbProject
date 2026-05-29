@@ -4,6 +4,7 @@ use App\Http\Middleware\DownForMaintenanceMW;
 use App\Http\Middleware\EnsureStudentPasswordIsUpdated;
 use App\Http\Middleware\EnsureUserAccountIsAuthenticated;
 use App\Http\Middleware\EnsureUserAccountRole;
+use App\Http\Middleware\LogServerErrors;
 use App\Http\Middleware\RouteGuard;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,10 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Global Middleware
-        //        $middleware->append([
-        //            PromotionMW::class,
-        //        ]);
+        $middleware->append([
+            LogServerErrors::class,
+        ]);
+
         // One MiddleWare
         $middleware->alias([
             'maintenance' => DownForMaintenanceMW::class,
