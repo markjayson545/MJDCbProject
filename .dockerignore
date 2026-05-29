@@ -1,0 +1,12 @@
+.git
+.env
+/vendor/
+/node_modules/
+/public/build/
+/storage/*.key
+/.phpunit.cache/
+/phpunit.xml
+/tests/
+/README.md
+/.github/
+bootstrap/cache/*.php
