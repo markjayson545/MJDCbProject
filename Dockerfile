@@ -29,6 +29,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql gd zip bcmath pcntl \
     # Enable Apache mod_rewrite for Laravel URLs
+    && a2dismod mpm_event mpm_worker || true \
     && a2enmod rewrite \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -55,4 +56,3 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 80
 
 CMD ["apache2-foreground"]
-
