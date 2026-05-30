@@ -22,7 +22,7 @@ class MaintenanceSettingsController extends Controller
             ->sort()
             ->values();
 
-        return view('student_mgmt.settings')
+        return view('admin.settings')
             ->with('settings', $settings)
             ->with('routeSuggestions', $routeSuggestions);
     }
@@ -34,7 +34,7 @@ class MaintenanceSettingsController extends Controller
         $settings->update($request->validated());
 
         return redirect()
-            ->route('studentMgmtSettings.edit')
+            ->route('admin.settings')
             ->with('success', 'Maintenance settings updated successfully.');
     }
 }
