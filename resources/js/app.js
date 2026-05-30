@@ -4,6 +4,44 @@ import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
 
+// Theme Toggle Helper Functions
+window.applyTheme = function (theme) {
+    document.documentElement.classList.add('theme-transition');
+    
+    localStorage.setItem('theme', theme);
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (theme === 'dark' || (theme === 'auto' && systemPrefersDark)) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+    } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+    }
+    
+    setTimeout(() => {
+        document.documentElement.classList.remove('theme-transition');
+    }, 300);
+
+    // Dispatch a global event so Alpine components can sync their internal states
+    window.dispatchEvent(new CustomEvent('theme-updated', { detail: theme }));
+};
+
+// Listen for system theme changes dynamically
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    const theme = localStorage.getItem('theme') || 'auto';
+    if (theme === 'auto') {
+        if (e.matches) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        } else {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+        }
+        window.dispatchEvent(new CustomEvent('theme-updated', { detail: 'auto' }));
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     const studentsList = document.getElementById('students-list');
 

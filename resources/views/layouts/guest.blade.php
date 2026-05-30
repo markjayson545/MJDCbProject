@@ -9,6 +9,21 @@
 
 
 
+        <!-- Prevent Flash of Unstyled Content (FOUC) -->
+        <script>
+            (function () {
+                const theme = localStorage.getItem('theme') || 'auto';
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (theme === 'dark' || (theme === 'auto' && systemPrefersDark)) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                } else {
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
+                }
+            })();
+        </script>
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>

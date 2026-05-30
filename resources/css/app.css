@@ -37,6 +37,255 @@
     --radius-sm: 8px;
 }
 
+html.light {
+    --clr-bg: #f8fafc;
+    --clr-surface: #ffffff;
+    --clr-surface-soft: #f1f5f9;
+    --clr-glass: rgba(255, 255, 255, 0.72);
+    --clr-glass-soft: rgba(241, 245, 249, 0.5);
+
+    --clr-accent: #16a34a;
+    --clr-accent-soft: rgba(22, 163, 74, 0.12);
+    --clr-accent-glow: rgba(22, 163, 74, 0.2);
+
+    --clr-info: #0891b2;
+    --clr-info-soft: rgba(8, 145, 178, 0.12);
+    --clr-info-glow: rgba(8, 145, 178, 0.2);
+
+    --clr-warn: #d97706;
+    --clr-danger: #e11d48;
+
+    --clr-text: #0f172a;
+    --clr-text-soft: #334155;
+    --clr-text-muted: #64748b;
+
+    --glass-border: 1px solid rgba(15, 23, 42, 0.12);
+    --glass-border-strong: 1px solid rgba(22, 163, 74, 0.25);
+
+    --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.04);
+    --shadow-glow: 0 0 0 1px rgba(22, 163, 74, 0.08), 0 0 30px rgba(22, 163, 74, 0.08);
+}
+
+/* Light mode overrides for layout elements to prevent dark background leakage */
+html.light body {
+    background-image:
+        radial-gradient(1400px 700px at -8% -10%, rgba(34, 211, 238, 0.12), transparent 55%),
+        radial-gradient(1000px 560px at 112% 0%, rgba(34, 197, 94, 0.12), transparent 60%),
+        radial-gradient(1100px 640px at 50% 120%, rgba(14, 116, 144, 0.1), transparent 62%),
+        linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+html.light body::before {
+    opacity: 0.08;
+    background-image:
+        linear-gradient(rgba(15, 23, 42, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.1) 1px, transparent 1px);
+}
+
+html.light .liquid-glass {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.68));
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+html.light .glass-panel {
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.68));
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+html.light .shell-panel {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.5));
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+html.light .main-card {
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.68));
+}
+
+html.light .header {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.82));
+    border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+html.light .nav {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(248, 250, 252, 0.78));
+    border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+html.light .data-table thead,
+html.light .mjdc-table thead {
+    background: linear-gradient(135deg, rgba(241, 245, 249, 0.92), rgba(255, 255, 255, 0.9));
+}
+
+/* Light mode card overrides to prevent dark backgrounds */
+html.light .stat-card,
+html.light .info-card,
+html.light .profile-card,
+html.light .detail-card,
+html.light .metric-card,
+html.light .details-card,
+html.light .contact-box,
+html.light .profile-sidebar,
+html.light .feature-item,
+html.light .tech-item,
+html.light .delete-zone,
+html.light .empty-state {
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.86), rgba(248, 250, 252, 0.76));
+    border-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+}
+
+html.light .stat-card::before,
+html.light .info-card::before,
+html.light .profile-card::before,
+html.light .detail-card::before,
+html.light .metric-card::before {
+    opacity: 0.25;
+}
+
+html.light .stat-card:hover,
+html.light .info-card:hover,
+html.light .profile-card:hover,
+html.light .detail-card:hover,
+html.light .metric-card:hover {
+    border-color: rgba(22, 163, 74, 0.4);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(22, 163, 74, 0.2);
+}
+
+html.light .data-table-wrapper,
+html.light .mjdc-table-wrap,
+html.light .table-shell {
+    background: linear-gradient(175deg, rgba(255, 255, 255, 0.88), rgba(248, 250, 252, 0.78));
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+/* Accessible Delta status colors in Light Mode */
+html.light .stat-card-change.up,
+html.light .stat-delta.up,
+html.light .status-positive {
+    color: #15803d; /* green-700 */
+}
+
+html.light .stat-card-change.down,
+html.light .stat-delta.down,
+html.light .status-negative {
+    color: #b91c1c; /* red-700 */
+}
+
+/* Nav Link overrides in Light Mode */
+html.light .nav-link {
+    color: var(--clr-text-soft);
+}
+
+html.light .nav-link.active {
+    color: #15803d; /* green-700 */
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.4);
+}
+
+html.light .nav-link:hover {
+    color: #0369a1; /* sky-700 */
+    background: rgba(14, 165, 233, 0.12);
+    border-color: rgba(14, 165, 233, 0.3);
+}
+
+/* Button overrides in Light Mode */
+html.light .btn-ghost {
+    color: var(--clr-text-soft);
+    border-color: rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+html.light .btn-ghost:hover {
+    color: var(--clr-text);
+    border-color: rgba(15, 23, 42, 0.24);
+    background: rgba(241, 245, 249, 0.9);
+}
+
+html.light .btn-danger {
+    color: #b91c1c; /* red-700 */
+    border-color: rgba(244, 63, 94, 0.38);
+    background: rgba(244, 63, 94, 0.08);
+}
+
+html.light .btn-danger:hover {
+    color: #ffffff;
+    background: var(--clr-danger);
+    border-color: var(--clr-danger);
+}
+
+/* Notice box in Light Mode */
+html.light .notice {
+    color: #0891b2; /* cyan-700 */
+    border-color: rgba(34, 211, 238, 0.35);
+    background: linear-gradient(160deg, rgba(34, 211, 238, 0.15), rgba(255, 255, 255, 0.8));
+}
+
+/* Header date element in Light Mode */
+html.light .header-date {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(22, 163, 74, 0.3);
+}
+
+/* Info keys / Detail labels in Light Mode */
+html.light .info-key,
+html.light .detail-key,
+html.light .meta-item strong {
+    color: var(--clr-text-soft);
+}
+
+/* Accessible status badges in Light Mode */
+html.light .badge-success,
+html.light .t-badge-success,
+html.light .yr-emerald,
+html.light .status-badge.success {
+    color: #15803d; /* green-700 */
+    border-color: rgba(34, 197, 94, 0.35);
+    background: rgba(34, 197, 94, 0.12);
+}
+
+html.light .badge-info,
+html.light .t-badge-info,
+html.light .yr-blue,
+html.light .status-badge.info {
+    color: #0369a1; /* sky-700 */
+    border-color: rgba(2, 132, 199, 0.3);
+    background: rgba(2, 132, 199, 0.1);
+}
+
+html.light .badge-warning,
+html.light .t-badge-warning,
+html.light .yr-amber,
+html.light .yr-orange,
+html.light .status-badge.warning {
+    color: #b45309; /* amber-700 */
+    border-color: rgba(217, 119, 6, 0.35);
+    background: rgba(217, 119, 6, 0.12);
+}
+
+html.light .badge-danger,
+html.light .t-badge-danger,
+html.light .yr-rose,
+html.light .status-badge.danger {
+    color: #b91c1c; /* red-700 */
+    border-color: rgba(244, 63, 94, 0.36);
+    background: rgba(244, 63, 94, 0.12);
+}
+
+/* Footer overrides in Light Mode */
+html.light .footer {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.9));
+    border-top-color: rgba(15, 23, 42, 0.08);
+}
+
+/* Smooth transition when switching themes */
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+    transition: background-color 250ms ease, border-color 250ms ease, color 250ms ease, box-shadow 250ms ease !important;
+    transition-delay: 0s !important;
+}
+
+
 * {
     box-sizing: border-box;
 }
@@ -672,6 +921,7 @@ a:hover {
 }
 
 .stat-card-title,
+.stat-label,
 .info-card-title,
 .metric-label,
 .muted-label {
@@ -710,6 +960,7 @@ a:hover {
 }
 
 .stat-card-value,
+.stat-value,
 .info-card-value,
 .metric-value {
     margin: 0;
@@ -728,6 +979,7 @@ a:hover {
 }
 
 .stat-card-change,
+.stat-delta,
 .info-card-description,
 .metric-note {
     margin-top: 0.45rem;
@@ -736,11 +988,13 @@ a:hover {
 }
 
 .stat-card-change.up,
+.stat-delta.up,
 .status-positive {
     color: #86efac;
 }
 
 .stat-card-change.down,
+.stat-delta.down,
 .status-negative {
     color: #fda4af;
 }
