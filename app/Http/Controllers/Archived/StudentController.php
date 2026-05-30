@@ -14,7 +14,7 @@ class StudentController extends Controller
     {
         $student = Student::with(['courses', 'degree'])->findOrFail($id);
 
-        return view('student_dashboard.student_dashboard', ['student' => $student]);
+        return view('student.student_dashboard', ['student' => $student]);
     }
 
     /**
